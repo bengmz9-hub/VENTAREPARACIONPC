@@ -94,6 +94,21 @@ BLOG = [
                    ("Cuándo traerlo al taller", "Si el LED sigue encendido tras las comprobaciones básicas, descríbenos qué luz es y qué pasa al arrancar para valorar la causa.")]),
 ]
 NAV = [("index.html", "Inicio"), ("servicios.html", "Servicios"), ("trabajos-realizados.html", "Trabajos realizados"), ("opiniones.html", "Opiniones"), ("pc-gaming.html", "PC Gaming"), ("blog.html", "Blog"), ("contacto.html", "Contacto")]
+# Submenús desplegables (hover/teclado en escritorio, botón en móvil)
+SUB = {
+    "servicios.html": [(f"servicio/{s['slug']}.html", s["t"]) for s in SERVICES] + [("servicios.html", "Ver todos los servicios")],
+    "pc-gaming.html": [("pc-gaming.html#todos", "Todos los equipos"), ("pc-gaming.html#amd", "AMD Ryzen"), ("pc-gaming.html#intel", "Intel")],
+}
+
+def nav_html(p, active):
+    out = []
+    for h, t in NAV:
+        a = f'<a href="{p}{h}"{" class=\"on\" aria-current=\"page\"" if h == active else ""}>{t}</a>'
+        if h in SUB:
+            items = "".join(f'<a href="{p}{x}">{y}</a>' for x, y in SUB[h])
+            a = f'<div class="has-sub">{a}<button class="sub-t" type="button" aria-expanded="false" aria-label="Mostrar submenú de {t}"></button><div class="sub">{items}</div></div>'
+        out.append(a)
+    return "".join(out)
 
 ICONS = {
     "cal": '<path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
@@ -125,9 +140,9 @@ def asset_img(name):
     return f"assets/img/{name}"
 
 # ------------------------------------------------------------------ plantilla
-def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False):
+def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False, solo=False):
     p = "../" * depth
-    nav = "".join(f'<a href="{p}{h}"{" class=\"on\" aria-current=\"page\"" if h == active else ""}>{t}</a>' for h, t in NAV)
+    nav = nav_html(p, active)
     cta = f"""<section class="cta"><div class="wrap cta-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
 <div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot = f"""<footer class="foot"><div class="wrap foot-in"><div><strong>VENTAREPARACIONPC</strong><br><span>L'Hospitalet de Llobregat · {TEL}</span></div>
@@ -136,12 +151,12 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False)
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name="description" content="{E(desc)}">
 <link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
-<body><a class="skip" href="#main">Saltar al contenido</a>
+<body{" class=\"solo\"" if solo else ""}><a class="skip" href="#main">Saltar al contenido</a>
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">☰</button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
 <a class="btn small desk-only" href="{WA}">{ic("cal")}Pedir cita</a></div></header>
-<main id="main">{body}</main>{cta}{foot}<script src="{p}assets/js/main.js"></script></body></html>"""
+<main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}<script src="{p}assets/js/main.js"></script></body></html>"""
 
 def head_band(crumbs, h1, sub=""):
     c = " <span>›</span> ".join(f'<a href="{h}">{t}</a>' if h else f"<span>{t}</span>" for h, t in crumbs)
@@ -165,20 +180,21 @@ def build():
     # ---- Inicio
     steps = [("pc", "Traes tu equipo", "Nos cuentas qué le pasa a tu ordenador."), ("search", "Revisión delante de ti", "Comprobamos el equipo contigo."), ("chat", "Explicación clara", "Te contamos qué vemos y qué opciones tienes."), ("doc", "Presupuesto", "Valoramos el coste antes de empezar el trabajo.")]
     st = "".join(f'<li><span class="n">{i+1}</span>{ic(ic_)}<strong>{a}</strong><small>{b}</small></li>' for i, (ic_, a, b) in enumerate(steps))
-    body = f"""<section class="hero"><div class="wrap hero-in"><div class="hero-t"><p class="kicker">Servicio técnico en L'Hospitalet de Llobregat</p>
-<h1>Mantenimiento y actualizaciones de <em>PC Gaming</em></h1><p class="lead">Revisamos la refrigeración y el estado de tu PC. Si quieres mejorar su rendimiento, te ayudamos a elegir qué componentes actualizar.</p>
-<div class="btns"><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
-<ul class="ticks"><li>{ic("shield")}Revisión delante de ti</li><li>{ic("doc")}Presupuesto previo</li><li>{ic("star")}<a href="opiniones.html">Reseñas en Google</a></li></ul></div>
-<div class="hero-img"><img src="{hero}" alt="PC gaming montado a medida en el taller" width="800" height="800"></div></div></section>
-<section class="wrap home-grid"><div class="col-l"><div class="card steps"><p class="kicker c">Así trabajamos</p><h2>Servicio técnico transparente</h2><ol>{st}</ol></div>
-<div class="ba"><div class="sec-h"><h2>Antes y después</h2><a href="trabajos-realizados.html">Ver trabajo completo {ic("arrow")}</a></div>
-<div class="ba-g"><figure class="card"><img src="assets/img/antes.jpg" alt="Interior del PC con polvo acumulado" loading="lazy"><figcaption>{ic("alert","r")}Antes del mantenimiento</figcaption></figure>
-<figure class="card"><img src="assets/img/despues.jpg" alt="Interior del PC limpio" loading="lazy"><figcaption>{ic("check","g")}Después del mantenimiento</figcaption></figure></div>
-<p class="muted">Limpieza del interior de un PC Gaming con polvo acumulado.</p></div></div>
-<div class="col-r"><div class="sec-h"><h2>Nuestros servicios</h2><a href="servicios.html">Ver todos los servicios {ic("arrow")}</a></div><div class="g2">{"".join(svc_card(s) for s in main_s)}</div>
-<h2 class="sp">Lo que opinan nuestros clientes</h2><div class="card rev"><div class="rev-i">{ic("star")}</div><div><h3>VENTAREPARACIONPC en Google</h3><p>Consulta las valoraciones en nuestra ficha de L'Hospitalet.</p><a class="more" href="opiniones.html">Ver reseñas en Google {ic("arrow")}</a></div></div>
-<div class="card rev"><div class="rev-i">{ic("pc")}</div><div><h3>PC Gaming a medida</h3><p>Equipos AMD e Intel montados bajo pedido.</p><a class="more" href="pc-gaming.html">Ver equipos {ic("arrow")}</a></div></div></div></section>"""
-    write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html"))
+    body = f"""<section class="hg"><div class="hg-c">
+<div class="hg-l">
+<div class="hg-top"><p class="hg-kick">Servicio técnico en L'Hospitalet de Llobregat</p>
+<h1>Expertos en <em>Reparación y Montaje</em> de Ordenadores</h1>
+<p class="hg-sum">En VentaReparacionPC cuidamos de tu equipo como si fuera nuestro.</p></div>
+<div class="hg-proc"><p class="hg-eb">Así trabajamos</p><h2>Servicio técnico transparente</h2><p class="hg-ps">Un proceso claro y sencillo para que siempre sepas qué le ocurre a tu equipo y qué soluciones tiene.</p>
+<ol class="hg-st"><li><span class="n">1</span><span class="ico">{ic("pc")}</span><b>Traes tu equipo</b><span class="d">Nos cuentas el problema y revisamos tu PC Gaming.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">2</span><span class="ico">{ic("search")}</span><b>Revisión delante de ti</b><span class="d">Analizamos el hardware delante del cliente.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">3</span><span class="ico">{ic("chat")}</span><b>Explicación clara</b><span class="d">Te mostramos el origen del problema y las posibles soluciones.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">4</span><span class="ico">{ic("doc")}</span><b>Presupuesto al momento</b><span class="d">Te damos el precio en el acto, sin compromiso.</span></li></ol></div>
+<div class="hg-bot"><p class="hg-small">Nos especializamos en la reparación de ordenadores de torre y portátiles de todas las marcas, resolviendo problemas de lentitud, pantallas rotas o fallos de placa base. Además, somos apasionados del hardware. Diseñamos tu PC Gaming personalizado pieza a pieza, optimizando cada euro de tu presupuesto para ofrecerte el máximo rendimiento en tus juegos favoritos. Todo ello con componentes de primeras marcas y total garantía.</p>
+<div class="hg-cta"><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div>
+</div>
+<figure class="hg-r"><img src="assets/img/CAJA-ARGB-7-VENT.---11.webp" alt="PC gaming con caja de cristal y ventiladores ARGB">
+
+</figure>
+</div></section>"""
+    write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", solo=True))
 
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \

@@ -3,6 +3,11 @@
   if (b && n) b.addEventListener('click', function () {
     var o = n.classList.toggle('open'); b.setAttribute('aria-expanded', o);
   });
+  [].forEach.call(document.querySelectorAll('.sub-t'), function (t) {
+    t.addEventListener('click', function () {
+      var li = t.parentNode, o = li.classList.toggle('open'); t.setAttribute('aria-expanded', o);
+    });
+  });
   var grid = document.getElementById('grid');
   if (grid) {
     var cards = [].slice.call(grid.children), f = 'all', q = '', c = document.getElementById('count');
@@ -20,6 +25,14 @@
       t.classList.add('on'); f = t.dataset.f; run();
     });
     document.getElementById('q').addEventListener('input', function () { q = this.value.trim().toLowerCase(); run(); });
+    var porHash = function () {
+      var m = { todos: 'all', amd: 'AMD', intel: 'Intel' }, v = m[location.hash.slice(1).toLowerCase()];
+      if (!v) return;
+      f = v;
+      [].forEach.call(document.getElementById('filters').children, function (x) { x.classList.toggle('on', x.dataset.f === v); });
+      run();
+    };
+    porHash(); window.addEventListener('hashchange', porHash);
   }
   document.addEventListener('click', function (e) {
     var i = e.target.closest('img[data-zoom]'); if (!i) return;
