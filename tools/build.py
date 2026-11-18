@@ -149,14 +149,14 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 <nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
     return f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{E(title)}</title><meta name="description" content="{E(desc)}">
+<title>{E(title)}</title><meta name="description" content="{E(desc)}"><meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
 <body{" class=\"solo\"" if solo else ""}><a class="skip" href="#main">Saltar al contenido</a>
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">☰</button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
 <a class="btn small desk-only" href="{WA}">{ic("cal")}Pedir cita</a></div></header>
-<main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}<script src="{p}assets/js/main.js"></script></body></html>"""
+<div class="draft-tag" role="note">Borrador de diseño</div><main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}<script src="{p}assets/js/main.js"></script></body></html>"""
 
 def head_band(crumbs, h1, sub=""):
     c = " <span>›</span> ".join(f'<a href="{h}">{t}</a>' if h else f"<span>{t}</span>" for h, t in crumbs)

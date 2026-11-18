@@ -188,3 +188,6 @@ h2{font-size:clamp(30px,2vw,38px)}
 /* Home = solo hero: sin scroll en escritorio. En móvil/tablet el hero se apila y sí puede desplazarse. */
 @media(min-width:961px){html:has(body.solo),body.solo{overflow:hidden;height:100%}.solo .hg{height:100vh;height:100svh;min-height:0;overflow:hidden}}
 @media(min-width:961px) and (max-height:740px){.hg{padding-top:84px;padding-bottom:12px}.hg-c{min-height:calc(100svh - 96px)}.hg-l{gap:12px}.hg h1{font-size:clamp(30px,2.8vw,46px)}.hg-sum{font-size:clamp(16px,1.25vw,20px)}.hg-small{font-size:12.5px;line-height:1.45}.hg-proc{padding:10px 18px}.hg-st{margin-top:8px}.hg-cta .btn{padding:11px 22px}}
+
+/* Etiqueta de borrador (quitar al publicar la web definitiva) */
+.draft-tag{position:fixed;z-index:60;left:14px;bottom:14px;background:#0f2a5c;color:#fff;font:700 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;padding:8px 13px;border-radius:99px;opacity:.92;pointer-events:none}
