@@ -1,0 +1,146 @@
+[
+ {
+  "slug": "intel-i5-14600kf-rtx5070-1tb-32gb-r-l",
+  "title": "Intel i5 14600KF RTX 5070 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.035",
+  "desc": "PC INTEL i5-14600KF. RTX 5070 12 GB. M.2 1 TB. RAM 32 DDR4 3200 MHZ. Fuente 1000W 80 PLUS Gold Modular. Placa MSI B760 . R.L. 360 mm. Windows 11 Profesional.",
+  "img": "Antec-C8-Full---1--1-.webp"
+ },
+ {
+  "slug": "intel-ultra-5-225f-rtx5060-1tb-32gb-r-l",
+  "title": "Intel Ultra 5 225F RTX 5060 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "1.670",
+  "desc": "PC Intel Ultra 5 225F. RTX 5060 8GB. Disco M.2 1TB 4.0. 32 GB 6000 MHZ. F. A. 750 W 80 Plus Gold. R.L. 360 A-RGB. Caja ATZ 4 X120 MM ARGB. R.L. 360 ARGB.",
+  "img": "Phanteks-XT-Pro-Ultra---1_800x800.webp"
+ },
+ {
+  "slug": "intel-ultra-5-225f-rtx5060-ti-1tb-32gb-r-l",
+  "title": "Intel Ultra 5 225F RTX 5060 Ti 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.205",
+  "desc": "PC Gaming Intel Core Ultra 7 225F. RTX 5060 TI 16 GB GDDR7. M.2 1TB 5.0. RAM 32 GB DDR5 6000 mhz CL30. F. 750 W 80+ Gold. R. L. 360mm ARGB. MSI MAG 110R PZ.    ",
+  "img": "MSI-MAG-PANO-110R-PZ---1_800x800.webp"
+ },
+ {
+  "slug": "intel-ultra-5-225f-rtx5070-1tb-32gb-r-l",
+  "title": "Intel Ultra 5 225F RTX 5070 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.095",
+  "desc": "PC Gaming Intel Core Ultra 7 225F. RTX 5070 12 GB GDDR7. M.2 1TB 5.0. RAM 32 GB DDR5 6000 mhz CL30. F. 850 W 80+ Gold. R. Liquida GAMING 360 mm ARGB.   ",
+  "img": "Phanteks-XT-Pro-Ultra-Blanca---1_800x800.webp"
+ },
+ {
+  "slug": "intel-ultra-5-245kf-rtx5070-ti-1tb-32gb-r-l",
+  "title": "Intel Ultra 5 245KF RTX 5070 Ti 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.525",
+  "desc": "PC Gaming Intel Ultra 5 245KF. RTX 5070 TI 16 GB. 32 GB DDR5 6000 CL30. Fuente 1000 W 80+ Gold. Placa MSI B860 ATX. M.2 1 TB 5.0. Caja Antec ARGB. R.L. 360mm. ",
+  "img": "Antec-C5-Curve-Argb---1_800x800.webp"
+ },
+ {
+  "slug": "intel-ultra-7-265kf-rtx5070-ti-1tb-32gb-r-l",
+  "title": "Intel Ultra 7 265KF RTX 5070 Ti 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.925",
+  "desc": "Intel Core Ultra 7 265KF. MSI RTX 5070 Ti GAMING TRIO OC 16GB GDDR7. M.2 1TB 5.0. RAM 32GB DDR5 6000 MHZ CL30. F. 1000 W 80+ Gold PCIE 5. R. Liquida 360 mm.  ",
+  "img": "Antec-Constellation-C5-Black-ARGB---1_800x800.webp"
+ },
+ {
+  "slug": "intel-ultra-7-270k-rtx5070-ti-1tb-32gb-r-l",
+  "title": "Intel Ultra 7 270K RTX 5070 Ti 1 TB 32 GB R.L.",
+  "brand": "Intel",
+  "price": "2.780",
+  "desc": "Intel Core Ultra 7 270K. RTX 5070 Ti 16GB GDDR7. M.2 1TB 4.0. RAM 32GB DDR5 6000 MHZ CL30. F. 1000 W 80+ Gold PCIE 5. R. Liquida 360 mm.  ",
+  "img": "Abysm-ARIAN-FRAME-A400-Black---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-5-7500f-g-rtx5060-1-tb-32-gb-r-l",
+  "title": "Ryzen 5 7500F G RTX 5060 1 TB 32 GB R.L.",
+  "brand": "AMD",
+  "price": "1.645",
+  "desc": "PC Gaming Ryzen 5 7500F. Grafica RTX 5060 8 GB GDDR7. RAM 32 GB DDR5 6000 MHz CL 30. Disco M.2 1 TB. R. L. 360 ARGB. F. 850 W 80 PLUS Gold Modular. ",
+  "img": "MSI-MAG-FORGE-320R-AIRFLOW-ARGB---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-5-7600x-a-rtx5060ti-32-gb-r-l",
+  "title": "Ryzen 5 7600X A RTX 5060 Ti 32 GB R.L.",
+  "brand": "AMD",
+  "price": "1.890",
+  "desc": "PC Gaming Ryzen 5 7600X. Grafica RTX 5060 TI 16 GB GDDR7. RAM 32 GB DDR5 6400 MHz. Disco M.2 1 TB 5.0. R. L. 360ARGB. F. 750 W 80 PLUS Gold Modular. ",
+  "img": "Abysm-Danube-Sava-H500-II-Air-ARGB---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-5-7600x-rtx5060-32-gb-1-tb-r-l",
+  "title": "Ryzen 5 7600X RTX 5060 32 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "1.660",
+  "desc": "Comprar PC Gaming R5 7600X. RTX 5060 8GB GDDR7 DLSS4.  M2 1 TB 4.0. 32 GB RGB DDR5 6400MHz. Fuente 750 W Plus Gold. ",
+  "img": "Abysm-Danube-Sava-H400-Prime---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-5-7600x-rtx5060ti-8-gb-1-tb-r-l",
+  "title": "Ryzen 5 7600X RTX 5060 Ti 8 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "1.745",
+  "desc": "Comprar PC Gaming R5 7600X. RTX 5060 8GB GDDR7 DLSS4.  M2 1 TB 4.0. 32 GB RGB DDR5 6400MHz. Fuente 750 W Plus Gold. Abysm Danube. MSI PRO B850-P WIFI. R.L. 360.",
+  "img": "CAJA-ARGB-7-VENT.---11.webp"
+ },
+ {
+  "slug": "ryzen-5-7600x-rx-9060-xt-1-tb-32-gb-r-l",
+  "title": "Ryzen 5 7600X RX 9060 XT 1 TB 32 GB R.L.",
+  "brand": "AMD",
+  "price": "1.965",
+  "desc": "PC Gaming Con un potente Ryzen 5 7600X, una increíble RX 9060 XT de 8 GB. M.2 de 1 TB. RAM de 32 GB DDR5 6000 Mhz y Refrigeración líquida de 360 mm.",
+  "img": "Antec-C8-Full---2_6dfkf7aj.webp"
+ },
+ {
+  "slug": "ryzen-7-7700x-rtx5070-32-gb-1-tb-r-l",
+  "title": "Ryzen 7 7700X RTX 5070 32 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "2.299",
+  "desc": "PC Gaming Con un potente Ryzen 7 7700X, una increíble RTX 5070 de 12 GB. M.2 de 1 TB. RAM de 32 GB DDR5 RGB a 6000 Mhz y Refrigeración líquida de 360 mm.",
+  "img": "CAJA-Abysm-Danube-SAVA-285-BX203---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-7-7800x3d-rtx5070-3-tb-32-gb-r-l",
+  "title": "Ryzen 7 7800X3D RTX 5070 3 TB 32 GB R.L.",
+  "brand": "AMD",
+  "price": "2.720",
+  "desc": "PC Ryzen 7 7800X3D. MSI RTX 5070 12G SHADOW 3X OC. MSI PRO B850-P WIFI. M.2 2TB 5.0 + HDD 2 TB. 32GB DDR5 6400MHz CL 30. Fuente 1000 W 80+ Modular.",
+  "img": "Gigabyte-C500-Panoramic-Stealth---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-7-7800x3d-rtx5070-32-gb-1-tb-r-l",
+  "title": "Ryzen 7 7800X3D RTX 5070 32 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "2.540",
+  "desc": "PC Gaming: Ryzen 7 7800X3D, MSI RTX 5070 12GB GDDR7 y MSI MAG X870E TOMAHAWK WIFI. 32 GB DDR5, SSD Gen5, Wi-Fi 7 y 1000W Gold. ¡Potencia extrema con DLSS 4.5!",
+  "img": "Antec-C8-Full---1--1-.webp"
+ },
+ {
+  "slug": "ryzen-7-9700x-rtx5070-32-gb-1-tb-r-l",
+  "title": "Ryzen 7 9700X RTX 5070 32 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "2.305",
+  "desc": "PC Gaming Ryzen 7 9700X. Grafica RTX 5070 12 GB GDDR7. RAM 32 GB DDR5 6000 MHz. Disco M.2 1 TB 5.0 x 2. R. L. 360ARGB. F. 850 W 80 PLUS Gold Modular. ",
+  "img": "MSI-MPG-VELOX-300R-AIRFLOW-PZ-WHITE---1_800x800_800x800.webp"
+ },
+ {
+  "slug": "ryzen-9-7900x-rtx5070-video-32gb-3tb-r-l",
+  "title": "Ryzen 9 7900X RTX 5070 Video 32 GB 3 TB R.L.",
+  "brand": "AMD",
+  "price": "2.520",
+  "desc": "PC Edición Video R9 7900X. RTX 5070 12GB GDDR7 DLSS4. MSI X670E GAMING PLUS WIFI. M2 1 TB 5.0 + HDD 2 TB. 32 GB RGB DDR5 6000MHz CL 32. Fuente 800W Plus Gold.",
+  "img": "Antec-Flux---1_800x800.webp"
+ },
+ {
+  "slug": "ryzen-9-9950x3d-rtx5080-32gb-1-tb-r-l",
+  "title": "Ryzen 9 9950X3D RTX 5080 32 GB 1 TB R.L.",
+  "brand": "AMD",
+  "price": "3.985",
+  "desc": "PC Gaming R9 9950X3D. RTX5080 16 GB. Placa Base B850 . F. A. 1000W 80 Plus Gold Modular. R.Liquida 360 A-RGB. RAM 32GB DDR5 6000MHz CL30. M.2 1TB 5.0 + M.2 1TB.",
+  "img": "CAJA-NZXT-H9-Flow---2.webp"
+ }
+]
