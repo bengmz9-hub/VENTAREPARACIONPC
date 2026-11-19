@@ -26,6 +26,7 @@ CALLE, CP, CIUDAD, PROVINCIA = "Carrer de les Aigües del Llobregat, 115, interi
 # Horario publicado en la web antigua. COMPROBAR que coincide con la ficha de Google Maps antes de lanzar.
 HORARIO = (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "10:00", "21:00")
 OG_IMG = "assets/img/CAJA-ARGB-7-VENT.---11.webp"
+OG_ALT = "PC gaming con caja de cristal y ventiladores ARGB"
 # URLs de la web antigua (sitemap de ventareparacionpc.es) -> página nueva. Se generan páginas de redirección.
 REDIRECTS = {
     "servicio-tecnico.html": "servicios.html",
@@ -188,9 +189,9 @@ def asset_img(name):
         shutil.copy(src, dst)
     return f"assets/img/{name}"
 
-_IMG_DIMS = {}
-def img_dims(name):
-    if name not in _IMG_DIMS:
+_IMG_SIZE = {}
+def img_size(name):
+    if name not in _IMG_SIZE:
         asset_img(name)
         data = (IMG / name).read_bytes()
         w = h = None
@@ -226,29 +227,66 @@ def img_dims(name):
                 i += length
         elif data[:8] == b"\x89PNG\r\n\x1a\n":
             w, h = struct.unpack(">II", data[16:24])
-        _IMG_DIMS[name] = f' width="{w}" height="{h}"' if (w and h) else ""
-    return _IMG_DIMS[name]
+        _IMG_SIZE[name] = (w, h) if (w and h) else None
+    return _IMG_SIZE[name]
+
+def img_dims(name):
+    sz = img_size(name)
+    return f' width="{sz[0]}" height="{sz[1]}"' if sz else ""
+
+def trim_meta(text, limit=155, min_len=110):
+    s = re.sub(r"\s+", " ", text).strip()
+    if len(s) <= limit:
+        return s
+    for m in reversed(list(re.finditer(r"\.\s+", s))):
+        end = m.start() + 1
+        if min_len <= end <= limit:
+            cand = s[:end].rstrip()
+            if not re.search(r"(?:^|\s)(?:[A-Za-z]\.|[A-Za-z]\.[A-Za-z]\.)$", cand):
+                return cand
+    cut = s[:limit + 1]
+    sp = cut.rfind(" ")
+    cand = (cut[:sp] if sp > 0 else s[:limit]).rstrip(" ,;:+/-")
+    while re.search(r"(?:^|\s)(?:[A-Za-z]\.?|de|y|con|en|a|el|la|los|las|para|por|R\.L\.)$", cand, flags=re.I) and " " in cand:
+        cand = cand.rsplit(" ", 1)[0].rstrip(" ,;:+/-")
+    return cand
 
 # ------------------------------------------------------------------ plantilla
-def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False, solo=False, img=None):
+def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False, solo=False, img=None, og_type="website", img_alt=None, is_404=False):
     p = "../" * depth
-    robots = "index, follow, max-image-preview:large" if INDEXAR else "noindex, nofollow"
-    # %%URL%% se sustituye en write() por la URL canónica de cada página
-    seo = (f'<link rel="canonical" href="%%URL%%"><meta property="og:type" content="website"><meta property="og:locale" content="es_ES">'
-           f'<meta property="og:site_name" content="{NEGOCIO}"><meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}">'
-           f'<meta property="og:url" content="%%URL%%"><meta property="og:image" content="{SITE}/{img or OG_IMG}">'
-           f'<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#1d5fd1">')
+    robots = "noindex, nofollow" if is_404 else ("index, follow, max-image-preview:large" if INDEXAR else "noindex, nofollow")
+    base_head = ('<script>(function(){var b=\'/\';if(location.hostname.endsWith(\'.github.io\')){var m=location.pathname.match(/^\\/([^/]+)/);if(m)b=\'/\'+m[1]+\'/\';}var el=document.createElement(\'base\');el.href=b;document.head.appendChild(el);})();</script>'
+                 '<noscript><base href="/"></noscript>') if is_404 else ""
+    if is_404:
+        seo = '<meta name="theme-color" content="#1d5fd1">'
+    else:
+        og_rel = img or OG_IMG
+        sz = img_size(Path(og_rel).name)
+        og_dims = f'<meta property="og:image:width" content="{sz[0]}"><meta property="og:image:height" content="{sz[1]}">' if sz else ""
+        # %%URL%% se sustituye en write() por la URL canónica de cada página
+        seo = (f'<link rel="canonical" href="%%URL%%"><meta property="og:type" content="{og_type}"><meta property="og:locale" content="es_ES">'
+               f'<meta property="og:site_name" content="{NEGOCIO}"><meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}">'
+               f'<meta property="og:url" content="%%URL%%"><meta property="og:image" content="{SITE}/{og_rel}">{og_dims}'
+               f'<meta property="og:image:alt" content="{E(img_alt or OG_ALT)}">'
+               f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{E(title)}">'
+               f'<meta name="twitter:description" content="{E(desc)}"><meta name="theme-color" content="#1d5fd1">')
+    icons = (f'<link rel="icon" href="{p}favicon.ico" sizes="16x16 32x32 48x48">'
+             f'<link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml">'
+             f'<link rel="icon" href="{p}assets/icons/icon-192.png" type="image/png" sizes="192x192">'
+             f'<link rel="icon" href="{p}assets/icons/icon-512.png" type="image/png" sizes="512x512">'
+             f'<link rel="apple-touch-icon" href="{p}apple-touch-icon.png" sizes="180x180">')
+    skip = "" if is_404 else '<a class="skip" href="#main">Saltar al contenido</a>'
     nav = nav_html(p, active)
     cta = f"""<section class="cta"><div class="wrap cta-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
 <div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot = f"""<footer class="foot"><div class="wrap foot-in"><div><strong>VENTAREPARACIONPC</strong><br><span>L'Hospitalet de Llobregat · {TEL}</span></div>
 <nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
     return f"""<!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{base_head}
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><meta name="robots" content="{robots}">
 {seo}
-<link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
-<body{" class=\"solo\"" if solo else ""}><a class="skip" href="#main">Saltar al contenido</a>
+{icons}<link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
+<body{" class=\"solo\"" if solo else ""}>{skip}
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button type="button" class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
@@ -325,7 +363,7 @@ def build():
 <aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "Service", "name": s["t"], "serviceType": s["t"], "description": s["d"], "url": "%%URL%%",
                 "provider": {"@id": SITE + "/#negocio"}, "areaServed": {"@type": "City", "name": CIUDAD}})
-        write(f"servicio/{s['slug']}.html", page("", f"{s['t']} | VRPC", s.get("m", s["d"]), body, "servicios.html", 1, img=asset_img(s["img"])))
+        write(f"servicio/{s['slug']}.html", page("", f"{s['t']} | VRPC", s.get("m", s["d"]), body, "servicios.html", 1, extra_head=negocio_ld(), img=asset_img(s["img"]), img_alt=s["alt"]))
 
     # ---- Trabajos realizados
     body = head_band([("index.html", "Inicio"), (None, "Trabajos realizados")], "Trabajos realizados") + f"""<section class="wrap sec two"><div><h2>Limpieza interna de un PC Gaming</h2>
@@ -356,7 +394,7 @@ def build():
         pc_title = f"{c['title']} | PC Gaming VRPC"
         if len(pc_title) > 60:
             pc_title = f"{c['title']} | VRPC"
-        write(f"pc/{c['slug']}.html", page("", pc_title, c["desc"][:155], body, "pc-gaming.html", 1, img=asset_img(c["img"])))
+        write(f"pc/{c['slug']}.html", page("", pc_title, trim_meta(c["desc"]), body, "pc-gaming.html", 1, img=asset_img(c["img"]), img_alt=f"Caja del equipo {c['title']}"))
 
     # ---- Blog
     bc = "".join(f"""<a class="card post" href="blog/{b['slug']}.html"><img src="{asset_img(b['img'])}" alt="" loading="lazy"><div class="pc-b"><span class="cat">{b['cat']}</span><h2 class="h3">{b['t']}</h2><p>{b['d']}</p></div></a>""" for b in BLOG)
@@ -365,8 +403,12 @@ def build():
     for b in BLOG:
         more = "".join(f'<a class="more row" href="{o["slug"]}.html">{o["t"]} {ic("arrow")}</a>' for o in BLOG if o is not b)
         secs = "".join(f"<h2>{h}</h2><p>{t}</p>" for h, t in b["sections"])
-        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" fetchpriority="high">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>"""
-        write(f"blog/{b['slug']}.html", page("", f"{b['t']} | Blog VRPC", b["d"], body, "blog.html", 1, img=asset_img(b["img"])))
+        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" fetchpriority="high">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>""" + \
+            ld({"@context": "https://schema.org", "@type": "BlogPosting", "headline": b["t"], "description": b["d"],
+                "image": f"{SITE}/{asset_img(b['img'])}", "url": "%%URL%%",
+                "mainEntityOfPage": {"@type": "WebPage", "@id": "%%URL%%"}, "inLanguage": "es",
+                "author": {"@id": SITE + "/#negocio"}, "publisher": {"@id": SITE + "/#negocio"}})
+        write(f"blog/{b['slug']}.html", page("", f"{b['t']} | Blog VRPC", b["d"], body, "blog.html", 1, extra_head=negocio_ld(), img=asset_img(b["img"]), og_type="article", img_alt=b["alt"]))
 
     # ---- Contacto / ubicación / legales
     body = head_band([("index.html", "Inicio"), (None, "Contacto")], "Contacto", "Contacta con VRPC para concertar una cita antes de traer tu ordenador.") + f"""<section class="wrap sec"><div class="g2"><div class="card box"><h2>Pide cita</h2><p>Ten a mano el modelo del equipo y una descripción de la avería o de la mejora que quieres hacer.</p><div class="btns"><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}{TEL}</a></div></div>
@@ -378,6 +420,12 @@ def build():
     for slug, t in (("aviso-legal", "Aviso legal"), ("politica-de-cookies", "Política de cookies")):
         body = head_band([("index.html", "Inicio"), (None, t)], t) + '<section class="wrap sec"><div class="card box"><p>Texto pendiente de completar con los datos del titular. (Aquí se migrará el texto legal de la web actual.)</p></div></section>'
         write(f"{slug}.html", page("", f"{t} | VRPC", t, body))
+
+    # ---- 404 (fuera de sitemap, sin canonical, noindex siempre, rutas resueltas via <base>)
+    body = '<section class="band"><div class="wrap"><h1>Página no encontrada</h1><p>La dirección que buscas no existe o ha cambiado de ubicación.</p></div></section>' \
+           '<section class="wrap sec"><div class="card box"><p>Puedes volver al inicio o ir directamente a las secciones principales del taller y de equipos PC Gaming.</p>' \
+           '<div class="btns"><a class="btn" href="index.html">Ir al inicio</a><a class="btn ghost" href="servicios.html">Servicios</a><a class="btn ghost" href="pc-gaming.html">PC Gaming</a><a class="btn ghost" href="blog.html">Blog</a><a class="btn ghost" href="contacto.html">Contacto</a></div></div></section>'
+    write("404.html", page("", "Página no encontrada | VRPC", "La página solicitada no existe en VentaReparacionPC.", body, is_404=True))
 
     # logo
     (ROOT / "assets").mkdir(exist_ok=True)
