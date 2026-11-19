@@ -283,3 +283,6 @@ h2{font-size:clamp(30px,2vw,38px)}
 
 /* Zonas táctiles de 44 px en móvil/tablet: el pie crece un poco, sin cambiar escritorio */
 @media(max-width:960px){.foot nav{gap:0 6px}.foot nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}}
+
+/* Portada de ficha: reserva su espacio antes de cargar (evita salto de diseño); la de PC ya tiene alto fijo */
+.cover{aspect-ratio:1/1}.cover.contain{aspect-ratio:auto}

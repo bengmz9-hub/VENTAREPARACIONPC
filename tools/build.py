@@ -321,7 +321,7 @@ def build():
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
         li = "".join(f"<li>{x}</li>" for x in s["steps"])
-        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s['img'])}" alt="{E(s['alt'])}" loading="lazy">{"".join(f"<p>{x}</p>" for x in s['p'])}<h2>Qué incluye</h2><ul class="list">{li}</ul>{f'<p><strong>{s["extra"]}</strong></p>' if s['extra'] else ''}</article>
+        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s['img'])}" alt="{E(s['alt'])}" fetchpriority="high">{"".join(f"<p>{x}</p>" for x in s['p'])}<h2>Qué incluye</h2><ul class="list">{li}</ul>{f'<p><strong>{s["extra"]}</strong></p>' if s['extra'] else ''}</article>
 <aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "Service", "name": s["t"], "serviceType": s["t"], "description": s["d"], "url": "%%URL%%",
                 "provider": {"@id": SITE + "/#negocio"}, "areaServed": {"@type": "City", "name": CIUDAD}})
@@ -349,7 +349,7 @@ def build():
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
     for c in pcs:
         specs = [x.strip() for x in re.split(r"\.\s+", c["desc"]) if x.strip()]
-        body = head_band([("../index.html", "Inicio"), ("../pc-gaming.html", "PC Gaming"), (None, E(c["title"]))], E(c["title"])) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover contain" src="../{asset_img(c['img'])}" alt="Caja del equipo {E(c['title'])}"{img_dims(c['img'])}>
+        body = head_band([("../index.html", "Inicio"), ("../pc-gaming.html", "PC Gaming"), (None, E(c["title"]))], E(c["title"])) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover contain" src="../{asset_img(c['img'])}" alt="Caja del equipo {E(c['title'])}" fetchpriority="high"{img_dims(c['img'])}>
 <p class="price">{c['price']} € <small>precio sin descuento</small></p><ul class="list">{"".join(f"<li>{E(x.rstrip('.'))}</li>" for x in specs)}</ul>
 <ul class="list"><li>Montaje bajo pedido</li><li>Windows 11 Pro licencia oficial (según configuración)</li></ul><p class="muted">Precios de referencia (última actualización conocida: 31-07-26). Confirma disponibilidad y plazo de entrega al pedir cita.</p></article>
 <aside class="card side"><h2 class="h3">Pide cita para este equipo</h2><p>Te confirmamos precio, plazo de entrega y posibles cambios de componentes.</p><a class="btn" href="{WA}?text={E(c['title'].replace(' ','%20'))}">{ic("wa")}Consultar por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>"""
@@ -365,7 +365,7 @@ def build():
     for b in BLOG:
         more = "".join(f'<a class="more row" href="{o["slug"]}.html">{o["t"]} {ic("arrow")}</a>' for o in BLOG if o is not b)
         secs = "".join(f"<h2>{h}</h2><p>{t}</p>" for h, t in b["sections"])
-        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" loading="lazy">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>"""
+        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" fetchpriority="high">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>"""
         write(f"blog/{b['slug']}.html", page("", f"{b['t']} | Blog VRPC", b["d"], body, "blog.html", 1, img=asset_img(b["img"])))
 
     # ---- Contacto / ubicación / legales
