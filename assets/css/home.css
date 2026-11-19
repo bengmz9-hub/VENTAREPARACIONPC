@@ -1,0 +1,926 @@
+/* Portada VRPC · Pantallas 1-3 (hero, servicio técnico, monta tu PC). Solo se carga en index.html */
+/* =====================================================================
+       Mock aislado: Scroll libre · Fondo único · Eje central de margen
+       Izquierda: Tarjetas Apple Liquid Glass (sticky a alto completo)
+       Derecha: Texto exacto con tipografía y espaciado reales en modo cortina
+       ===================================================================== */
+
+    /* Fondo idéntico y continuo en todo el lienzo */
+    html {
+      scroll-behavior: smooth;
+      background: linear-gradient(100deg, #eaf1ff 0%, #f4f8ff 52%, #ffffff 100%) fixed;
+    }
+    body {
+      background: transparent;
+      overflow-x: clip;
+    }
+
+    /* Navbar: transparente en Hero, píldora Liquid Glass al hacer scroll */
+    .top-in {
+      transition: background .24s ease, border-color .24s ease, box-shadow .24s ease;
+    }
+    .top.is-scrolled .top-in {
+      background: rgba(255, 255, 255, .74);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      backdrop-filter: blur(24px) saturate(180%);
+      border-color: rgba(255, 255, 255, .82);
+      box-shadow: 0 10px 30px rgba(15, 42, 92, .10), inset 0 1px 1px rgba(255, 255, 255, .9);
+    }
+
+    /* Pantalla 1 · Hero sin fondo propio ni borde inferior */
+    .hg {
+      position: relative;
+      background: transparent !important;
+      border-bottom: 0 !important;
+      height: 100vh;
+      height: 100svh;
+      min-height: 680px;
+      padding: 88px clamp(20px, 3.6vw, 72px) 26px;
+    }
+    .hg-c {
+      min-height: 0;
+      height: 100%;
+    }
+
+    /* Indicador discreto de scroll en el pie del Hero */
+    .scroll-cue {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .76);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, .86);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(15, 42, 92, .08);
+      transition: opacity .22s ease, transform .22s ease, border-color .2s ease;
+      z-index: 6;
+    }
+    .scroll-cue:hover {
+      text-decoration: none;
+      border-color: var(--bl);
+      color: var(--bl);
+      transform: translate(-50%, 2px);
+    }
+    .scroll-cue .ic {
+      width: 14px;
+      height: 14px;
+      color: var(--bl);
+      animation: cue-bob 2.2s ease-in-out infinite;
+    }
+    .scroll-cue.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 8px);
+    }
+    @keyframes cue-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
+    }
+
+    /* =====================================================================
+       PANTALLA 2 · División central con línea vertical de margen
+       ===================================================================== */
+    .s2 {
+      position: relative;
+      padding: 92px clamp(20px, 3.6vw, 72px) 28px;
+      background: transparent;
+      border: 0;
+    }
+
+    .s2-c {
+      position: relative;
+      width: 100%;
+      max-width: 1640px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) 1px minmax(0, 1.08fr);
+      gap: clamp(32px, 3vw, 60px);
+      align-items: stretch;
+    }
+
+    /* Línea vertical de margen: columna central exacta (distancia idéntica a tarjetas y texto) */
+    .s2-axis {
+      position: relative;
+      align-self: stretch;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        rgba(29, 95, 209, 0) 0%,
+        rgba(29, 95, 209, .36) 5%,
+        rgba(29, 95, 209, .36) 95%,
+        rgba(29, 95, 209, 0) 100%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+    .s2-axis::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--bl);
+      box-shadow: 0 0 0 4px rgba(29, 95, 209, .14);
+      transform: translateX(-50%);
+    }
+
+    /* ---------------- IZQUIERDA: APPLE LIQUID GLASS (misma altura exacta que la columna de texto) ---------------- */
+    .s2-left {
+      position: relative;
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(220px, 1.15fr) auto minmax(0, .95fr) minmax(0, .95fr);
+      gap: clamp(12px, 1.2vw, 18px);
+      min-width: 0;
+    }
+
+    /* Orbes ambientales sutiles detrás del cristal */
+    .s2-left::before,
+    .s2-left::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(56px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .s2-left::before {
+      width: 340px;
+      height: 340px;
+      top: 4%;
+      left: -4%;
+      background: radial-gradient(circle, rgba(29, 95, 209, .22) 0%, rgba(96, 165, 250, .06) 65%, transparent 100%);
+    }
+    .s2-left::after {
+      width: 320px;
+      height: 320px;
+      bottom: 6%;
+      right: 2%;
+      background: radial-gradient(circle, rgba(14, 165, 233, .18) 0%, rgba(29, 95, 209, .05) 65%, transparent 100%);
+    }
+
+    /* Superficie Canónica LiquidGlass (blur 28px, saturate 190%, bisel, 0° 3D tilt, luz radial 2D) */
+    .lg-card {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 26px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .64) 0%, rgba(255, 255, 255, .36) 100%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, .80);
+      box-shadow:
+        0 18px 42px -8px rgba(15, 42, 92, .12),
+        0 2px 8px rgba(15, 42, 92, .05),
+        inset 0 1px 1px 0 rgba(255, 255, 255, .94),
+        inset 0 -1px 0 0 rgba(29, 95, 209, .08);
+      will-change: transform, opacity;
+      transition: border-color .22s ease, box-shadow .22s ease;
+      min-height: 0;
+    }
+    .lg-card:hover {
+      border-color: rgba(255, 255, 255, .98);
+      box-shadow:
+        0 24px 52px -10px rgba(15, 42, 92, .16),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+    }
+    .lg-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .28s ease;
+      background: radial-gradient(
+        460px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 255, 255, .62),
+        rgba(143, 184, 255, .14) 38%,
+        transparent 62%
+      );
+      z-index: 2;
+    }
+    .lg-card:hover::before { opacity: 1; }
+    .lg-card > * { position: relative; z-index: 3; }
+
+    /* Tarjeta 1: Antes y después (compacta para dar protagonismo a la rejilla 2x2) */
+    .lg-ba {
+      display: flex;
+      flex-direction: column;
+      padding: clamp(10px, 1.2vh, 14px);
+      height: 100%;
+    }
+    .lg-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: clamp(6px, .9vh, 10px);
+      flex: none;
+    }
+    .lg-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .76);
+      border: 1px solid rgba(255, 255, 255, .94);
+      box-shadow: inset 0 1px 0 #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--bl);
+    }
+    .lg-head a {
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .lg-head a .ic { width: 14px; height: 14px; }
+
+    .lg-ba-grid {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .lg-ba-fig {
+      position: relative;
+      margin: 0;
+      height: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .74);
+      background: #0f2a5c;
+    }
+    .lg-ba-fig img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: zoom-in;
+      transition: transform .35s cubic-bezier(.2, .7, .2, 1);
+    }
+    .lg-ba-fig:hover img { transform: scale(1.03); }
+    .lg-ba-tag {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .86);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      backdrop-filter: blur(14px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, .94);
+      color: var(--ink);
+      font-size: 11.5px;
+      font-weight: 700;
+      box-shadow: 0 6px 16px rgba(15, 42, 92, .20);
+    }
+    .lg-ba-tag .ic { width: 13px; height: 13px; }
+
+    /* Cabecera "SOLUCIONES PARA TU PC GAMING / Nuestros servicios" */
+    .lg-sec-head {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 2px 2px 0;
+    }
+    .lg-sec-eyebrow {
+      margin: 0 0 2px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--bl);
+    }
+    .lg-sec-title {
+      margin: 0;
+      font-size: clamp(19px, 1.35vw, 23px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--ink);
+    }
+    .lg-sec-head a {
+      font-size: 12.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .lg-sec-head a .ic { width: 14px; height: 14px; }
+
+    /* Filas 2x2 de tarjetas de servicios (estilo foto sobre Apple Liquid Glass) */
+    .lg-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(12px, 1.2vw, 18px);
+      height: 100%;
+      min-height: 0;
+    }
+    .lg-svc {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px 18px;
+      color: var(--ink);
+      text-decoration: none;
+      height: 100%;
+      border-radius: 22px;
+      /* Gris perla a la izquierda -> transición intensa hacia foto nítida y color más fuerte a la derecha */
+      background: linear-gradient(
+        100deg,
+        rgba(232, 237, 245, .94) 0%,
+        rgba(225, 233, 245, .86) 44%,
+        rgba(198, 214, 240, .42) 68%,
+        rgba(15, 42, 92, .22) 100%
+      );
+      border-color: rgba(210, 222, 242, .92);
+    }
+    .lg-svc:hover { text-decoration: none; }
+    .lg-svc-bg {
+      position: absolute !important;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      /* Mejora 1: la foto vive solo en la franja derecha y nunca queda debajo del texto */
+      width: 40%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: .95;
+      filter: contrast(1.08) saturate(1.15);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .7) 30%, #000 55%);
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .7) 30%, #000 55%);
+      z-index: 1 !important;
+      pointer-events: none;
+      transition: transform .4s ease, filter .25s ease;
+    }
+    .lg-svc:hover .lg-svc-bg { transform: scale(1.04); filter: contrast(1.12) saturate(1.22); }
+    .lg-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .88);
+      border: 1px solid rgba(255, 255, 255, .96);
+      box-shadow: 0 5px 14px rgba(15, 42, 92, .10), inset 0 1px 0 #fff;
+      color: var(--bl);
+      display: grid;
+      place-items: center;
+      margin-bottom: 10px;
+    }
+    .lg-ico .ic { width: 18px; height: 18px; }
+    .lg-svc h3 {
+      margin: 0 0 6px;
+      font-size: clamp(14.5px, 1vw, 16px);
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--ink);
+      max-width: 60%;
+    }
+    .lg-svc p {
+      margin: 0;
+      font-size: clamp(12px, .82vw, 13px);
+      line-height: 1.45;
+      color: var(--ink);
+      opacity: .88;
+      max-width: 60%;
+    }
+    .lg-svc .more {
+      margin-top: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--bl);
+    }
+
+    /* ---------------- DERECHA: TEXTO A ANCHO COMPLETO HASTA EL EXTREMO DEL HERO + CORTINA ---------------- */
+    .s2-right {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 6px 0 0 0;
+      text-align: left;
+    }
+
+    /* Cada bloque/línea se abre en modo cortina desde el borde izquierdo (línea central) */
+    .curtain {
+      position: relative;
+      will-change: clip-path, transform, opacity;
+    }
+
+    .rt-h2 {
+      margin: 0 0 22px;
+      font-size: clamp(34px, 3vw, 48px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--ink);
+    }
+
+    .rt-p {
+      margin: 0 0 20px;
+      font-size: clamp(15.5px, 1.05vw, 17px);
+      line-height: 1.68;
+      color: var(--ink);
+      max-width: none;
+    }
+    .rt-p.soft {
+      color: var(--mut);
+    }
+
+    .rt-sub {
+      margin: 18px 0 22px;
+      font-size: clamp(20px, 1.45vw, 25px);
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--navy);
+    }
+
+    .rt-cat {
+      margin: 12px 0 16px;
+      font-size: clamp(17px, 1.2vw, 20px);
+      line-height: 1.3;
+      font-weight: 800;
+      color: var(--bl);
+    }
+
+    .rt-item {
+      margin: 0 0 18px;
+      font-size: clamp(15px, 1vw, 16px);
+      line-height: 1.65;
+      color: var(--mut);
+      max-width: none;
+    }
+    .rt-item strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .rt-list {
+      list-style: none;
+      margin: 0 0 18px;
+      padding: 0;
+    }
+    .rt-list .rt-item {
+      position: relative;
+      margin-bottom: 10px;
+      padding-left: 20px;
+    }
+    .rt-list .rt-item::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: .62em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--bl);
+    }
+
+    .rt-spacer {
+      height: 14px;
+    }
+
+    .rt-close {
+      margin-top: 16px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(29, 95, 209, .18);
+    }
+    .rt-close-title {
+      margin: 0 0 10px;
+      font-size: clamp(19px, 1.35vw, 23px);
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--navy);
+    }
+    .rt-close-p {
+      margin: 0;
+      font-size: clamp(15px, 1vw, 16.5px);
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .rt-close-p a {
+      color: var(--bl);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .rt-cta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .rt-cta .btn {
+      position: relative;
+      overflow: hidden;
+      padding: 14px 26px;
+      border-radius: 12px;
+    }
+    .rt-cta .btn:not(.ghost)::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(105deg, transparent 25%, rgba(255, 255, 255, .36) 50%, transparent 75%);
+      transition: transform .55s ease;
+    }
+    .rt-cta .btn:not(.ghost):hover::after {
+      transform: translateX(100%);
+    }
+
+
+    /* Animaciones vinculadas al scroll visible en escritorio */
+    @media (min-width: 961px) {
+      /* Izquierda: tarjetas Liquid Glass y cabecera salen hacia la izquierda desde el eje */
+      .js-scroll [data-reveal="left"] {
+        opacity: var(--p-o, 1);
+        transform: translate3d(var(--p-x, 0px), var(--p-y, 0px), 0) scale(var(--p-s, 1));
+      }
+      /* Derecha: cortina nítida que se abre de izquierda (eje central) a derecha mientras está en pantalla */
+      .js-scroll .curtain[data-reveal="curtain"] {
+        opacity: var(--c-o, 1);
+        transform: translate3d(var(--c-x, 0px), 0, 0);
+        clip-path: inset(-6px var(--c-clip, 0%) -6px 0);
+      }
+    }
+
+    /* Responsive móvil y tablet */
+    @media (max-width: 960px) {
+      .hg { height: auto; min-height: 0; }
+      .scroll-cue, .mock-hud, .s2-axis { display: none; }
+      /* Mejora 5: el título no queda tapado por la navbar al saltar con el enlace */
+      .s2 { padding: 36px 16px 52px; scroll-margin-top: 84px; }
+      .s2-c { grid-template-columns: 1fr; gap: 36px; }
+      /* Mejora 3: en móvil primero antes/después y servicios, después el texto */
+      .s2-right { padding-left: 0; }
+      .s2-left { position: static; height: auto; min-height: 0; grid-template-rows: auto; }
+      .lg-ba-grid, .lg-pair, .lg-dark { grid-template-columns: 1fr; }
+      .lg-ba-fig { aspect-ratio: 16 / 10; height: auto; }
+      .lg-svc { min-height: 175px; height: auto; }
+    }
+
+    /* Mejora 4: quien pide menos movimiento en su sistema no ve animaciones */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scroll-cue .ic { animation: none; }
+      .lg-svc-bg, .lg-ba-fig img, .rt-cta .btn::after { transition: none !important; }
+    }
+
+    /* Modo estático */
+    html[data-motion="off"] .scroll-cue .ic { animation: none; }
+    html[data-motion="off"] .lg-card,
+    html[data-motion="off"] .curtain {
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+    }
+
+    /* ===================================================================== */
+    /* =====================================================================
+       PANTALLA 3 "Monta tu PC": las piezas entran y encajan con el scroll.
+       SEO: todo el texto está en el HTML y visible al cargar; la animación solo
+       empieza con el primer scroll real del usuario. Piezas = SVG inline (0 descargas).
+       ===================================================================== */
+
+
+    /* Escenario: alto = recorrido del scroll; dentro, un bloque sticky de una pantalla */
+    .s3 { position: relative; margin-top: clamp(56px, 7vw, 130px); }
+    .s3-stick {
+      min-height: 100vh; min-height: 100svh;
+      display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+      gap: clamp(28px, 4vw, 80px); align-items: center;
+      max-width: 1640px; margin: 0 auto; padding: 96px clamp(20px, 3.6vw, 72px) 32px;
+    }
+
+    /* Lienzo del PC: cristal oscuro tipo vitrina para que brille el ARGB */
+    .rig {
+      position: relative; height: min(76vh, 720px); border-radius: 28px;
+      background: radial-gradient(ellipse 80% 70% at 50% 40%, #1b2a4a 0%, #0b1428 100%);
+      box-shadow: 0 30px 64px rgba(15, 42, 92, .28), inset 0 1px 0 rgba(255,255,255,.08);
+      display: grid; place-items: center; overflow: hidden;
+    }
+    .rig svg { width: 92%; height: 94%; overflow: visible; filter: drop-shadow(0 24px 40px rgba(0,0,0,.45)); }
+    .rig-cap {
+      position: absolute; left: 20px; top: 18px; color: #8fb8ff;
+      font: 800 11px/1 Inter, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .again {
+      position: absolute; right: 16px; bottom: 16px; z-index: 2; appearance: none; cursor: pointer;
+      padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(143,184,255,.4);
+      background: rgba(15,26,48,.7); color: #cfe0ff; font: 700 12px/1 Inter, system-ui, sans-serif;
+    }
+    .again:hover { background: rgba(29,95,209,.6); color: #fff; }
+    .rig-pct { position: absolute; right: 20px; top: 16px; color: #fff; font: 800 13px/1 Inter, system-ui, sans-serif; opacity: .8; }
+
+    /* Cada pieza se mueve con variables que pone el JS (transform/opacity: sin saltos de maqueta) */
+    .part {
+      transform-box: fill-box; transform-origin: center;
+      opacity: var(--o, 1);
+      transform: translate(var(--x, 0px), var(--y, 0px)) rotate(var(--r, 0deg)) scale(var(--s, 1));
+    }
+    .fan-blade { transform-box: fill-box; transform-origin: center; }
+    .rig.on .fan-blade { animation: spin .9s linear infinite; }
+    .rig .glow { opacity: 0; transition: opacity .6s ease; }
+    .rig.on .glow { opacity: .85; }
+    .rig .air { opacity: 0; transition: opacity .6s ease; }
+    .rig.on .air { opacity: .9; animation: air 1.4s ease-in-out infinite; }
+    @keyframes air { 0%, 100% { transform: translateY(2px); } 50% { transform: translateY(-3px); } }
+    .rig .argbc { color: #3a8bff; }
+    .rig.on .argbc { animation: argb 5s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes argb { 0% { color: #3a8bff; } 33% { color: #b44dff; } 66% { color: #22d3ee; } 100% { color: #3a8bff; } }
+
+    /* Columna de texto: pasos; el activo se resalta */
+    .s3-txt { min-width: 0; }
+    /* Misma escala que Pantallas 1-2: eyebrow = .hg-eb · h2 = .rt-h2 · lead = .rt-p · pasos = .rt-item */
+    .s3-eb { margin: 0 0 12px; font-size: clamp(11px, .78vw, 13px); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--bl); }
+    .s3-txt h2 { margin: 0 0 22px; font-size: clamp(34px, 3vw, 48px); line-height: 1.08; font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+    .s3-lead { margin: 0 0 20px; color: var(--ink); font-size: clamp(15.5px, 1.05vw, 17px); line-height: 1.68; max-width: 40em; }
+    .steps3 { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .steps3 li {
+      display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+      padding: 10px 14px; border-radius: 14px; border: 1px solid transparent;
+      transition: background .25s ease, border-color .25s ease, opacity .25s ease;
+    }
+    .steps3 .k {
+      width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+      background: #fff; color: var(--bl); font-weight: 800; font-size: 13px;
+      box-shadow: 0 4px 12px rgba(15,42,92,.10);
+    }
+    .steps3 b { display: block; font-size: clamp(15px, 1vw, 16px); font-weight: 700; line-height: 1.35; color: var(--ink); }
+    .steps3 li div span { display: block; margin-top: 2px; font-size: clamp(13.5px, .9vw, 14.5px); line-height: 1.5; color: var(--mut); }
+    .js-anim .steps3 li { opacity: .45; }
+    .js-anim .steps3 li.done { opacity: .8; }
+    .js-anim .steps3 li.act { opacity: 1; background: rgba(255,255,255,.75); border-color: #d5e3fb; }
+    .js-anim .steps3 li.act .k, .js-anim .steps3 li.done .k { background: var(--bl); color: #fff; }
+    .s3-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
+    .s3-cta .btn { padding: 13px 24px; border-radius: 12px; }
+
+
+    /* Pantallas bajas: compactar la lista */
+    @media (min-width: 961px) and (max-height: 820px) {
+      .steps3 li div span { display: none; }
+      .s3-lead { margin-bottom: 12px; }
+    }
+    /* Móvil y tablet: sin sticky ni recorrido largo; PC montado y brillando + lista */
+    @media (max-width: 960px) {
+      .s3-stick { min-height: 0; grid-template-columns: 1fr; padding: 48px 16px; }
+      .rig { height: 420px; }
+    }
+    @media (max-width: 560px) { .rig { height: 340px; } }
+  
+
+
+    /* =====================================================================
+       PANTALLA 3 · maquetación según boceto
+       [torre | título + piezas]  /  [franja: texto · ventajas · botones]  /  [4 tarjetas liquid glass]
+       Escala de espacios: 8 · 12 · 16 · 24 · 32 · 48 px · Tipografía = Pantallas 1-2
+       ===================================================================== */
+    .s3 { max-width: 1640px; margin: clamp(56px, 7vw, 130px) auto 0; padding: 0 clamp(20px, 3.6vw, 72px) 48px; }
+    .s3-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(32px, 3vw, 48px); align-items: start; }
+    .s3 .rig { height: min(56vh, 560px); width: auto; aspect-ratio: 560 / 620; max-width: 36vw; }
+    .s3 .rig svg { width: 88%; height: 88%; }
+    .s3-head { min-width: 0; }
+    .s3-head .s3-eb { margin: 0 0 8px; }
+    .s3-head h2 { margin: 0 0 24px; font-size: clamp(34px, 3vw, 48px); line-height: 1.08; font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+    .s3 .steps3 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; align-content: start; height: auto; }
+    .s3 .steps3 li { grid-template-columns: 28px 1fr; gap: 12px; padding: 8px 12px; }
+    .s3 .steps3 .k { width: 28px; height: 28px; font-size: 12px; }
+
+    .s3-band { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 16px 48px; align-items: start;
+      margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(29, 95, 209, .18); }
+    .s3-intro h3 { margin: 0 0 8px; font-size: clamp(20px, 1.45vw, 25px); line-height: 1.25; font-weight: 800; letter-spacing: -.02em; color: var(--navy); }
+    .s3-intro p { margin: 0; font-size: clamp(15px, 1vw, 16px); line-height: 1.6; color: var(--ink); }
+    .s3-feat { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .s3-feat li { padding-left: 16px; border-left: 2px solid rgba(29, 95, 209, .35); }
+    .s3-feat b { display: block; margin-bottom: 4px; font-size: clamp(15px, 1vw, 16px); line-height: 1.35; font-weight: 700; color: var(--ink); }
+    .s3-feat span { display: block; font-size: clamp(13.5px, .9vw, 14.5px); line-height: 1.5; color: var(--mut); }
+    .s3 .s3-cta { grid-column: 2; justify-self: end; margin: 0; display: flex; gap: 12px; flex-wrap: nowrap; }
+    .s3 .s3-cta .btn { padding: 13px 22px; border-radius: 12px; white-space: nowrap; }
+
+    .s3-more { margin-top: 24px; }
+    .s3-more h3.s3-more-eb { margin: 0 0 12px; font-size: clamp(11px, .78vw, 13px); line-height: 1.2; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--bl); }
+    .s3-why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .s3-why li.lg-card { display: grid; grid-template-columns: 36px 1fr; column-gap: 16px; align-items: start; padding: 16px 20px; border-radius: 22px; }
+    .s3-why .ico { grid-row: span 2; color: var(--bl); display: block; }
+    .s3-why .ico .ic { width: 32px; height: 32px; }
+    .s3-why b { display: block; margin: 2px 0 4px; font-size: clamp(15px, 1vw, 16px); line-height: 1.35; font-weight: 700; color: var(--ink); }
+    .s3-why p { margin: 0; font-size: clamp(13.5px, .9vw, 14.5px); line-height: 1.5; color: var(--mut); }
+
+    /* Escritorio: la Pantalla 3 entera cabe en una pantalla */
+    @media (min-width: 961px) {
+      .s3 { height: 100vh; height: 100svh; min-height: 680px; box-sizing: border-box; padding-top: 96px; padding-bottom: 24px;
+        display: grid; grid-template-rows: minmax(0, 1fr) auto auto; }
+      .s3-top { min-height: 0; height: 100%; }
+      .s3 .rig { height: 100%; max-height: 600px; }
+    }
+    @media (min-width: 961px) and (max-width: 1280px) {
+      .s3-feat span { display: none; }
+    }
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3 { padding-top: 88px; }
+      .s3 .steps3 li div span, .s3-why p { display: none; }
+      .s3-head h2 { font-size: clamp(28px, 2.4vw, 40px); margin-bottom: 16px; }
+      .s3-band, .s3-more { margin-top: 16px; }
+      .s3-band { padding-top: 16px; }
+      .s3-why li.lg-card { align-items: center; padding: 12px 16px; }
+      .s3-why .ico .ic { width: 28px; height: 28px; }
+    }
+    @media (min-width: 961px) and (max-height: 740px) {
+      .s3-feat span, .s3-intro p { display: none; }
+      .s3 .steps3 li { padding: 4px 10px; }
+    }
+    /* Móvil y tablet: todo apilado, sin altura fija */
+    @media (max-width: 960px) {
+      .s3 { margin-top: 48px; padding: 0 16px 48px; }
+      .s3-top { grid-template-columns: 1fr; gap: 24px; }
+      .s3 .rig { width: 100%; height: auto; max-width: 480px; margin: 0 auto; }
+      .s3 .steps3 { grid-template-columns: 1fr; }
+      .s3-band { grid-template-columns: 1fr; gap: 24px; }
+      .s3 .s3-cta { grid-column: auto; justify-self: start; }
+      .s3-feat { grid-template-columns: 1fr; gap: 16px; }
+      .s3 .s3-cta { flex-wrap: wrap; }
+      .s3-why { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) { .s3-why { grid-template-columns: 1fr; } }
+
+    /* =====================================================================
+       PANTALLA 3 · PROPORCIONES EXACTAS DEL BOCETO (escritorio)
+       Vertical (bajo la navbar): bloque superior 49 · franja 26 · tarjetas 15  (+ 2 huecos iguales)
+       Horizontal del bloque superior: torre 36 · hueco 9 · título+piezas 55
+       Todos los bloques comparten los mismos márgenes laterales.
+       ===================================================================== */
+    @media (min-width: 961px) {
+      .s3 {
+        --s3-gap: clamp(16px, 3vh, 40px);
+        height: 100vh; height: 100svh; min-height: 680px; box-sizing: border-box;
+        padding: 96px clamp(20px, 3.6vw, 72px) var(--s3-gap);
+        display: grid; grid-template-rows: minmax(0, 49fr) minmax(0, 26fr) minmax(0, 15fr); row-gap: var(--s3-gap);
+      }
+      .s3-top { height: auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 36fr) minmax(0, 55fr); column-gap: 9%; align-items: stretch; }
+      /* torre: ocupa todo su rectángulo; el dibujo se centra dentro sin deformarse */
+      .s3 .rig { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: auto; justify-self: stretch; align-self: stretch; }
+      .s3 .rig svg { width: auto; height: 86%; max-width: 86%; }
+      /* título + piezas: mismo alto que la torre, contenido repartido */
+      .s3-head { min-height: 0; display: flex; flex-direction: column; justify-content: space-between; }
+      .s3-head h2 { margin: 0; }
+      .s3 .steps3 { margin: 0; align-content: end; }
+      /* franja: texto a la izquierda, ventajas a la derecha, botones abajo a la derecha */
+      .s3-band { margin: 0; padding: var(--s3-gap) 0 0; min-height: 0; grid-template-rows: 1fr auto; align-content: stretch; row-gap: 16px; }
+      .s3 .s3-cta { align-self: end; }
+      /* tarjetas: ocupan su fila entera */
+      .s3-more { margin: 0; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+      .s3-why { height: 100%; min-height: 0; }
+      .s3-why li.lg-card { height: 100%; box-sizing: border-box; align-content: center; }
+    }
+    /* Alturas justas: se ocultan descripciones, nunca títulos ni la estructura */
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3 { padding-top: 88px; }
+      .s3-band { row-gap: 8px; padding-top: 12px; }
+      .s3 .s3-cta .btn { padding: 10px 18px; }
+      .s3-intro p { font-size: 14.5px; line-height: 1.5; }
+    }
+
+    /* =====================================================================
+       PANTALLA 3 · ajustes v5: tarjetas más grandes y cuadradas, franja llena,
+       resaltado de piezas al pasar por los pasos
+       ===================================================================== */
+    @media (min-width: 961px) {
+      .s3 { grid-template-rows: minmax(0, 44fr) minmax(0, 25fr) minmax(0, 23fr); }
+      .s3-intro p + p { margin-top: 8px; }
+      .s3-feat span { font-size: clamp(13.5px, .9vw, 14.5px); }
+      /* tarjetas: bloque vertical (icono, título, texto) */
+      .s3-why li.lg-card { display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: clamp(16px, 1.6vw, 28px); }
+      .s3-why .ico .ic { width: 36px; height: 36px; }
+      .s3-why b { margin: 4px 0 0; font-size: clamp(16px, 1.1vw, 18px); }
+    }
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3-intro-2 { display: none; }
+      .s3-feat span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+      .s3-why li.lg-card { gap: 4px; padding: 12px 16px; }
+      .s3-why .ico .ic { width: 28px; height: 28px; }
+    }
+    @media (min-width: 961px) and (max-height: 740px) {
+      .s3-feat span { display: none; }
+    }
+    @media (min-width: 961px) and (max-height: 1100px) {
+      .s3 .steps3 li div span { display: none; }
+      .s3-intro p { font-size: 14.5px; line-height: 1.5; }
+      .s3-intro h3 { margin-bottom: 6px; }
+      .s3-feat span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+      .s3-why li.lg-card { gap: 4px; padding: 12px clamp(14px, 1.2vw, 22px); }
+      .s3-why .ico .ic { width: 30px; height: 30px; }
+      .s3-why p { display: block; }
+    }
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3-why p { display: none; }
+    }
+    /* el texto de la izquierda ocupa también la fila de los botones: sin hueco */
+    @media (min-width: 961px) { .s3-intro { grid-row: 1 / span 2; } }
+    /* resaltado de la pieza */
+    .steps3 li { cursor: pointer; }
+    .steps3 li.hov { background: rgba(255,255,255,.9); border-color: #b9cdf3; opacity: 1 !important; }
+    .steps3 li:focus-visible { outline: 2px solid var(--bl); outline-offset: 2px; }
+    .rig .part { transition: filter .25s ease; }
+    .rig.focus .part:not(.hl) { filter: brightness(.4) saturate(.5); }
+    .rig.focus .part.hl { filter: brightness(1.25) drop-shadow(0 0 6px rgba(58,139,255,.95)) drop-shadow(0 0 18px rgba(58,139,255,.6)); }
+
+    /* =====================================================================
+       PANTALLA 3 · v6: botones junto al paso 7 · franja solo texto, centrada
+       ===================================================================== */
+    @media (min-width: 961px) {
+      .s3-head { position: relative; }
+      /* botones en la celda vacía a la derecha del paso 7 */
+      .s3-head .s3-cta { position: absolute; right: 0; bottom: 0; width: calc(50% - 8px); justify-content: flex-start; gap: 12px; grid-column: auto; }
+      .s3-head .s3-cta .btn { flex: 1 1 0; justify-content: center; }
+      /* franja: texto principal + 3 ventajas, centrado en su alto, columnas equilibradas */
+      .s3-band { grid-template-columns: minmax(0, 1.6fr) minmax(0, 3fr); grid-template-rows: none; align-items: center; align-content: center; column-gap: 48px; }
+      .s3-intro { grid-row: auto; }
+      .s3-intro h3 { margin: 0 0 12px; font-size: clamp(20px, 1.5vw, 27px); }
+      .s3-intro p { font-size: clamp(15px, 1vw, 17px); line-height: 1.6; }
+      .s3-intro p + p { margin-top: 8px; }
+      .s3-feat { gap: 32px; align-items: center; }
+      .s3-feat li { padding-left: 20px; }
+      .s3-feat b { margin-bottom: 8px; font-size: clamp(16px, 1.1vw, 18px); }
+      .s3-feat span { font-size: clamp(14px, .95vw, 15.5px); line-height: 1.55; }
+    }
+    @media (min-width: 961px) and (max-height: 1100px) {
+      .s3-intro p { font-size: 15px; line-height: 1.5; }
+      .s3-intro p + p { margin-top: 4px; }
+      .s3-feat span { -webkit-line-clamp: 4; }
+    }
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3-intro-2 { display: none; }
+      .s3-feat span { -webkit-line-clamp: 3; font-size: 14px; }
+      .s3-intro h3 { font-size: clamp(20px, 1.5vw, 24px); margin-bottom: 8px; }
+    }
+
+    /* =====================================================================
+       PANTALLA 3 · v7: franja con título arriba + 4 columnas · tarjetas con foto
+       ===================================================================== */
+    .s3-band-h { margin: 0; font-size: clamp(22px, 1.7vw, 30px); line-height: 1.2; font-weight: 800; letter-spacing: -.02em; color: var(--navy); }
+    .s3-feat li { border-left: 0; padding-left: 0; }
+    .s3-feat li + li { border-left: 1px solid rgba(29, 95, 209, .28); padding-left: 32px; }
+    .s3-why li.lg-card { position: relative; overflow: hidden; }
+    .s3-why-img {
+      position: absolute !important; top: 0; right: 0; bottom: 0; width: 36%; height: 100%; object-fit: cover; z-index: 1 !important;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.75) 30%, #000 55%);
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.75) 30%, #000 55%);
+      pointer-events: none; transition: transform .4s ease;
+    }
+    .s3-why li.lg-card:hover .s3-why-img { transform: scale(1.04); }
+    .s3-why li.lg-card > :not(.s3-why-img) { max-width: 66%; }
+    @media (min-width: 961px) {
+      .s3-band { display: grid; grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; row-gap: 20px; }
+      .s3-feat { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; align-items: start; }
+      .s3-feat b { margin-bottom: 8px; font-size: clamp(16px, 1.1vw, 18px); }
+      .s3-feat span { font-size: clamp(14px, .95vw, 15.5px); line-height: 1.55; -webkit-line-clamp: unset; display: block; }
+    }
+    @media (min-width: 961px) and (max-height: 860px) {
+      .s3-band { row-gap: 12px; }
+      .s3-band-h { font-size: clamp(20px, 1.5vw, 24px); }
+      .s3-feat span { font-size: 14px; line-height: 1.45; }
+    }
+    @media (min-width: 961px) and (max-height: 740px) {
+      .s3-feat span { display: none; }
+    }
+    @media (max-width: 960px) {
+      .s3-feat li + li { border-left: 0; padding-left: 0; border-top: 1px solid rgba(29, 95, 209, .2); padding-top: 16px; }
+    }
+
+    /* PANTALLA 3 · v8: sin línea sobre la franja · piezas a la izquierda, caja a la derecha */
+    .s3-band { border-top: 0; }
+    @media (min-width: 961px) {
+      .s3-top { grid-template-columns: minmax(0, 55fr) minmax(0, 36fr); }
+      .s3-head { order: -1; }
+    }
+
+    /* Mismo hueco visual entre pantallas: fin de contenido -> inicio de contenido = 118 px
+       (hero 26 px abajo + Pantalla 2 92 px arriba  ==  Pantalla 2 28 px abajo + Pantalla 3 96 px arriba - 6 px) */
+    @media (min-width: 961px) { .s3 { margin-top: -6px; } }

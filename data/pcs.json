@@ -1,6 +1,7 @@
 [
  {
   "slug": "intel-i5-14600kf-rtx5070-1tb-32gb-r-l",
+  "old": "intel-i5-14600kf-rtx5070-1tb-32gb-r.l..html",
   "title": "Intel i5 14600KF RTX 5070 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.035",
@@ -9,6 +10,7 @@
  },
  {
   "slug": "intel-ultra-5-225f-rtx5060-1tb-32gb-r-l",
+  "old": "intel-ultra-5-225f-rtx5060-1tb-32gb-r.l..html",
   "title": "Intel Ultra 5 225F RTX 5060 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "1.670",
@@ -17,6 +19,7 @@
  },
  {
   "slug": "intel-ultra-5-225f-rtx5060-ti-1tb-32gb-r-l",
+  "old": "intel-ultra-5-225f-rtx5060-ti-1tb-32gb-r.l..html",
   "title": "Intel Ultra 5 225F RTX 5060 Ti 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.205",
@@ -25,6 +28,7 @@
  },
  {
   "slug": "intel-ultra-5-225f-rtx5070-1tb-32gb-r-l",
+  "old": "intel-ultra-5-225f-rtx5070-1tb-32gb-r.l..html",
   "title": "Intel Ultra 5 225F RTX 5070 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.095",
@@ -33,6 +37,7 @@
  },
  {
   "slug": "intel-ultra-5-245kf-rtx5070-ti-1tb-32gb-r-l",
+  "old": "intel-ultra-5-245kf-rtx5070-ti-1tb-32gb-r.l..html",
   "title": "Intel Ultra 5 245KF RTX 5070 Ti 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.525",
@@ -41,6 +46,7 @@
  },
  {
   "slug": "intel-ultra-7-265kf-rtx5070-ti-1tb-32gb-r-l",
+  "old": "intel-ultra-7-265kf-rtx5070-ti-1tb-32gb-r.l..html",
   "title": "Intel Ultra 7 265KF RTX 5070 Ti 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.925",
@@ -49,6 +55,7 @@
  },
  {
   "slug": "intel-ultra-7-270k-rtx5070-ti-1tb-32gb-r-l",
+  "old": "intel-ultra-7-270k-rtx5070-ti-1tb-32gb-r.l..html",
   "title": "Intel Ultra 7 270K RTX 5070 Ti 1 TB 32 GB R.L.",
   "brand": "Intel",
   "price": "2.780",
@@ -57,6 +64,7 @@
  },
  {
   "slug": "ryzen-5-7500f-g-rtx5060-1-tb-32-gb-r-l",
+  "old": "ryzen-5-7500f-g-rtx5060-1-tb-32-gb-r.l..html",
   "title": "Ryzen 5 7500F G RTX 5060 1 TB 32 GB R.L.",
   "brand": "AMD",
   "price": "1.645",
@@ -65,6 +73,7 @@
  },
  {
   "slug": "ryzen-5-7600x-a-rtx5060ti-32-gb-r-l",
+  "old": "ryzen-5-7600x-a-rtx5060ti-32-gb-r.l..html",
   "title": "Ryzen 5 7600X A RTX 5060 Ti 32 GB R.L.",
   "brand": "AMD",
   "price": "1.890",
@@ -73,6 +82,7 @@
  },
  {
   "slug": "ryzen-5-7600x-rtx5060-32-gb-1-tb-r-l",
+  "old": "ryzen-5-7600x-rtx5060-32-gb-1-tb-r.l.html",
   "title": "Ryzen 5 7600X RTX 5060 32 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "1.660",
@@ -81,6 +91,7 @@
  },
  {
   "slug": "ryzen-5-7600x-rtx5060ti-8-gb-1-tb-r-l",
+  "old": "ryzen-5-7600x-rtx5060ti-8-gb-1-tb-r.l.html",
   "title": "Ryzen 5 7600X RTX 5060 Ti 8 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "1.745",
@@ -89,6 +100,7 @@
  },
  {
   "slug": "ryzen-5-7600x-rx-9060-xt-1-tb-32-gb-r-l",
+  "old": "ryzen-5-7600x-rx-9060-xt-1-tb-32-gb-r.l..html",
   "title": "Ryzen 5 7600X RX 9060 XT 1 TB 32 GB R.L.",
   "brand": "AMD",
   "price": "1.965",
@@ -97,6 +109,7 @@
  },
  {
   "slug": "ryzen-7-7700x-rtx5070-32-gb-1-tb-r-l",
+  "old": "ryzen-7-7700x-rtx5070-32-gb-1-tb-r.l..html",
   "title": "Ryzen 7 7700X RTX 5070 32 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "2.299",
@@ -105,6 +118,7 @@
  },
  {
   "slug": "ryzen-7-7800x3d-rtx5070-3-tb-32-gb-r-l",
+  "old": "ryzen-7-7800x3d-rtx5070-3-tb-32-gb-r.l..html",
   "title": "Ryzen 7 7800X3D RTX 5070 3 TB 32 GB R.L.",
   "brand": "AMD",
   "price": "2.720",
@@ -113,6 +127,7 @@
  },
  {
   "slug": "ryzen-7-7800x3d-rtx5070-32-gb-1-tb-r-l",
+  "old": "ryzen-7-7800x3d-rtx5070-32-gb-1-tb-r.l..html",
   "title": "Ryzen 7 7800X3D RTX 5070 32 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "2.540",
@@ -121,6 +136,7 @@
  },
  {
   "slug": "ryzen-7-9700x-rtx5070-32-gb-1-tb-r-l",
+  "old": "ryzen-7-9700x-rtx5070-32-gb-1-tb-r.l..html",
   "title": "Ryzen 7 9700X RTX 5070 32 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "2.305",
@@ -129,6 +145,7 @@
  },
  {
   "slug": "ryzen-9-7900x-rtx5070-video-32gb-3tb-r-l",
+  "old": "ryzen-9-7900x-rtx5070-video-32gb-3tb-r.l..html",
   "title": "Ryzen 9 7900X RTX 5070 Video 32 GB 3 TB R.L.",
   "brand": "AMD",
   "price": "2.520",
@@ -137,6 +154,7 @@
  },
  {
   "slug": "ryzen-9-9950x3d-rtx5080-32gb-1-tb-r-l",
+  "old": "ryzen-9-9950x3d-rtx5080-32gb-1-tb-r.l.html",
   "title": "Ryzen 9 9950X3D RTX 5080 32 GB 1 TB R.L.",
   "brand": "AMD",
   "price": "3.985",

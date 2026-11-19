@@ -1,11 +1,30 @@
 (function () {
-  var b = document.querySelector('.burger'), n = document.getElementById('nav');
-  if (b && n) b.addEventListener('click', function () {
-    var o = n.classList.toggle('open'); b.setAttribute('aria-expanded', o);
-  });
+  // Menú móvil: cajón lateral con fondo oscurecido (cierra con ✕, fondo, Escape o al elegir enlace)
+  var b = document.querySelector('.burger'), n = document.getElementById('nav'), ov = document.getElementById('nav-ov');
+  var cerrarSubs = function (salvo) {
+    [].forEach.call(document.querySelectorAll('.has-sub.open'), function (h) {
+      if (h === salvo) return;
+      h.classList.remove('open');
+      var t = h.querySelector('.sub-t'); if (t) t.setAttribute('aria-expanded', false);
+    });
+  };
+  var menu = function (o) {
+    n.classList.toggle('open', o); if (ov) ov.classList.toggle('open', o);
+    b.setAttribute('aria-expanded', o); b.setAttribute('aria-label', o ? 'Cerrar menú' : 'Abrir menú');
+    if (!o) cerrarSubs();
+  };
+  if (b && n) {
+    b.addEventListener('click', function () { menu(!n.classList.contains('open')); });
+    if (ov) ov.addEventListener('click', function () { menu(false); });
+    n.addEventListener('click', function (e) { if (e.target.closest('a')) menu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && n.classList.contains('open')) { menu(false); b.focus(); }
+    });
+  }
   [].forEach.call(document.querySelectorAll('.sub-t'), function (t) {
     t.addEventListener('click', function () {
       var li = t.parentNode, o = li.classList.toggle('open'); t.setAttribute('aria-expanded', o);
+      if (o) cerrarSubs(li);
     });
   });
   var grid = document.getElementById('grid');
