@@ -17,3 +17,5 @@ tools/_*
 # Archivos internos de trabajo (no forman parte de la web)
 .claude/
 .project-map.md
+continue.md
+ideas.md
