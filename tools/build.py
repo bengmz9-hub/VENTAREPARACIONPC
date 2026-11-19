@@ -3,7 +3,7 @@
 Uso:  python tools/build.py
 Lee las fichas de PC desde varios/sitio (solo local) la primera vez y deja
 los datos en data/pcs.json; después ya no hace falta 'varios/'."""
-import html, json, re, shutil, sys
+import html, json, re, shutil, struct, sys
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -95,36 +95,49 @@ def load_pcs():
 # ------------------------------------------------------------------ contenido
 SERVICES = [
     dict(slug="mantenimiento-pc-gaming", t="Mantenimiento PC Gaming", d="Limpieza interna, pasta térmica y revisión de la refrigeración.", img="Mantenimiento-PC-Gaming---6.webp", main=True, icon="fan",
+         alt="Técnico aplicando pasta térmica al procesador durante el mantenimiento de un PC Gaming",
          p=["Con el tiempo el polvo se acumula en filtros, ventiladores y disipadores, y el equipo sube de temperatura y hace más ruido. Hacemos una limpieza interna cuidadosa y revisamos la refrigeración.",
             "Cambiamos la pasta térmica cuando hace falta, revisamos ventiladores y flujo de aire y comprobamos temperaturas antes y después."],
          steps=["Limpieza interna de polvo (filtros, ventiladores, disipador)", "Revisión de la refrigeración y del flujo de aire", "Pasta térmica si procede", "Comprobación de temperaturas"],
          extra="Mantenimiento desde 70 €. Te damos el presupuesto antes de empezar."),
     dict(slug="actualizacion-pc-gaming", t="Actualización de PC Gaming", d="Amplía la RAM, instala un SSD o cambia la gráfica.", img="TECNICO-INFORMATICO---10--1-.webp", main=True, icon="chart",
+         alt="Técnico informático revisando componentes y cableado dentro de un PC Gaming en el taller",
          p=["Si tu PC ya no rinde como antes, a veces basta con cambiar una pieza. Te ayudamos a elegir qué actualizar primero según lo que usas y tu presupuesto.",
             "Comprobamos la compatibilidad con tu placa, fuente y caja antes de comprar nada."],
          steps=["Revisión del equipo y de lo que necesitas", "Propuesta de componentes compatibles", "Instalación y pruebas", "Comprobación final de rendimiento"],
          extra="Cuéntanos modelo y uso y te orientamos."),
     dict(slug="actualizacion-bios", t="Actualización de BIOS", d="Comprobación del firmware y de la compatibilidad de tu placa base.", img="Actulizacion-BIOS---2_800x800.webp", icon="wrench",
+         alt="Portátil mostrando una barra de progreso al 75 % de actualización del sistema, con herramientas de taller alrededor",
          p=["Una BIOS actualizada puede ser necesaria para admitir un procesador nuevo o corregir fallos. Es una operación delicada: la hacemos comprobando antes la versión y la compatibilidad de tu placa."], steps=["Identificación de placa y versión", "Comprobación de compatibilidad", "Actualización controlada", "Verificación de arranque"], extra=""),
     dict(slug="asistencia-remota", t="Asistencia remota", d="Ayuda a distancia para incidencias de software.", img="Asistencia-Remota---3_800x800.webp", icon="wrench",
+         m="Asistencia remota para incidencias de software, sistema, programas y configuración: acordamos cita y nos conectamos con tu permiso sin traer el equipo.",
+         alt="Monitor con icono de engranaje y herramientas que representa la asistencia remota",
          p=["Para problemas de software (sistema, programas, configuración) podemos ayudarte a distancia sin que tengas que traer el equipo."], steps=["Nos cuentas el problema", "Acordamos cita", "Conexión remota con tu permiso", "Resolución y comprobación"], extra=""),
     dict(slug="asesoramiento-compra", t="Asesoramiento de compra", d="Elige componentes compatibles con tu presupuesto.", img="ASESORAMIENTO-COMPRA-PC---8.webp", icon="wrench",
+         m="Te ayudamos a elegir componentes compatibles con tu presupuesto, juegos y programas en L'Hospitalet, con comprobación y opción de montaje.",
+         alt="Componentes de PC Gaming (placa base, tarjeta gráfica, refrigeración líquida y caja) en banco de taller",
          p=["Antes de comprar piezas o un equipo, te ayudamos a elegir componentes compatibles entre sí y ajustados a tu presupuesto y a tus juegos o programas."], steps=["Presupuesto y uso", "Selección de componentes", "Comprobación de compatibilidad", "Opción de montaje en el taller"], extra=""),
     dict(slug="servicio-de-montaje", t="Servicio de montaje", d="Montaje y pruebas de los componentes de tu PC.", img="Montaje-PC-Gaming---9.webp", icon="wrench",
+         m="Montaje de PC en L'Hospitalet con los componentes que tienes o elijas: cableado, instalación y pruebas antes de la entrega con cita previa.",
+         alt="Técnico montando un procesador en la placa base junto a tarjetas gráficas en el taller",
          p=["Montamos tu PC con los componentes que ya tienes o con los que elijas, gestionamos los cables y probamos el equipo antes de entregarlo."], steps=["Recepción de componentes", "Montaje y cableado", "Instalación y pruebas", "Entrega con cita previa"], extra=""),
     dict(slug="convertir-documentos", t="Conversión de documentos", d="Ayuda con archivos que necesitas abrir o cambiar de formato.", img="CONVERTIR-DOCUMENTOS---1.webp", icon="wrench",
+         alt="Gráfico de conversión de documentos (DOC, PDF, XLS, PPT) y fotos (JPG, PNG, GIF, RAW)",
          p=["Te ayudamos a abrir o convertir documentos y fotos entre formatos habituales (DOC, PDF, XLS, PPT, JPG, PNG…)."], steps=["Nos traes o envías el archivo", "Conversión al formato que necesitas", "Comprobación del resultado"], extra=""),
 ]
 BLOG = [
     dict(slug="cuando-necesita-mantenimiento-tu-pc-gaming", cat="Mantenimiento", t="¿Cuándo necesita mantenimiento tu PC Gaming?", d="Tres señales que puedes observar mientras juegas y qué información llevar al taller.", img="Mantenimiento-PC-Gaming---6.webp",
+         alt="Técnico aplicando pasta térmica al procesador durante el mantenimiento de un PC Gaming",
          sections=[("Fíjate en los cambios", "El polvo visible en los filtros, los ventiladores que hacen más ruido de lo habitual y un equipo que se calienta más con el mismo juego son buenas razones para revisar la refrigeración."),
                    ("Compara en condiciones parecidas", "Anota qué juegos usabas, cuándo empezó el cambio y si pasa siempre o solo después de un rato. Si tienes mediciones de temperatura anteriores, compáralas con el mismo juego y ajustes similares. La temperatura ambiente también influye."),
                    ("¿Limpieza o diagnóstico?", "Una limpieza preventiva puede tener sentido si encuentras polvo acumulado y el equipo funciona bien. Si hay apagados, bloqueos o el ventilador deja de girar, describe el síntoma al pedir cita para que se pueda valorar la causa.")]),
     dict(slug="que-actualizar-primero-en-tu-pc-gaming", cat="Actualizaciones", t="¿Qué actualizar primero en tu PC Gaming?", d="Cómo decidir entre ampliar la RAM, instalar un SSD o cambiar la tarjeta gráfica.", img="Montaje-PC-Gaming---9.webp",
+         alt="Técnico instalando componentes en una placa base junto a tarjetas gráficas para actualizar un PC Gaming",
          sections=[("Empieza por el cuello de botella", "Observa qué falla: si tarda en cargar, un SSD puede ayudar; si va justo de memoria al abrir varias cosas, la RAM; si los fotogramas por segundo caen en juegos exigentes, suele ser la gráfica."),
                    ("Comprueba la compatibilidad", "Antes de comprar, revisa tu placa base, la fuente de alimentación y el espacio de la caja. Una pieza potente no sirve si no es compatible con el resto."),
                    ("Pide asesoramiento", "Si dudas, cuéntanos tu equipo y tu presupuesto y te orientamos sobre qué mejora compensa más.")]),
     dict(slug="que-significan-los-led-de-la-placa-base", cat="Diagnóstico", t="¿Qué significan los LED de la placa base?", d="Qué comprobar si una luz de diagnóstico se queda encendida al arrancar.", img="MSI-MAG-B860-TOMAHAWK-WIFI---2_800x800.webp",
+         alt="Placa base MSI MAG B860 Tomahawk WiFi con sus ranuras de memoria, socket y conectores",
          sections=[("Busca CPU, DRAM, VGA y BOOT", "Muchas placas tienen cuatro LED de diagnóstico que indican en qué fase se detiene el arranque: procesador, memoria, gráfica o dispositivo de arranque."),
                    ("Qué comprobar primero", "Reasienta la memoria y la gráfica, revisa los cables de alimentación y desconecta lo que no sea imprescindible. Consulta el manual de tu placa para el significado exacto."),
                    ("Cuándo traerlo al taller", "Si el LED sigue encendido tras las comprobaciones básicas, descríbenos qué luz es y qué pasa al arrancar para valorar la causa.")]),
@@ -175,6 +188,47 @@ def asset_img(name):
         shutil.copy(src, dst)
     return f"assets/img/{name}"
 
+_IMG_DIMS = {}
+def img_dims(name):
+    if name not in _IMG_DIMS:
+        asset_img(name)
+        data = (IMG / name).read_bytes()
+        w = h = None
+        if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+            chunk = data[12:16]
+            if chunk == b"VP8X":
+                w = 1 + int.from_bytes(data[24:27], "little")
+                h = 1 + int.from_bytes(data[27:30], "little")
+            elif chunk == b"VP8 " and data[23:26] == b"\x9d\x01\x2a":
+                w = struct.unpack("<H", data[26:28])[0] & 0x3FFF
+                h = struct.unpack("<H", data[28:30])[0] & 0x3FFF
+            elif chunk == b"VP8L" and data[20] == 0x2F:
+                bits = struct.unpack("<I", data[21:25])[0]
+                w = (bits & 0x3FFF) + 1
+                h = ((bits >> 14) & 0x3FFF) + 1
+        elif data[:2] == b"\xff\xd8":
+            i = 2
+            while i < len(data):
+                if data[i] != 0xFF:
+                    break
+                while i < len(data) and data[i] == 0xFF:
+                    i += 1
+                if i >= len(data):
+                    break
+                marker = data[i]
+                i += 1
+                if marker in (0xD8, 0xD9, 0x01) or (0xD0 <= marker <= 0xD7):
+                    continue
+                length = struct.unpack(">H", data[i:i + 2])[0]
+                if marker in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                    h, w = struct.unpack(">HH", data[i + 3:i + 7])
+                    break
+                i += length
+        elif data[:8] == b"\x89PNG\r\n\x1a\n":
+            w, h = struct.unpack(">II", data[16:24])
+        _IMG_DIMS[name] = f' width="{w}" height="{h}"' if (w and h) else ""
+    return _IMG_DIMS[name]
+
 # ------------------------------------------------------------------ plantilla
 def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False, solo=False, img=None):
     p = "../" * depth
@@ -212,7 +266,7 @@ def head_band(crumbs, h1, sub=""):
 def svc_card(s, p="", h="h3"):
     # h="h2" cuando la tarjeta cuelga directamente del h1 (la clase h3 conserva su tamaño visual)
     tag = f'<h2 class="h3">{s["t"]}</h2>' if h == "h2" else f"<h3>{s['t']}</h3>"
-    return f"""<a class="card svc" href="{p}servicio/{s['slug']}.html"><img src="{p}{asset_img(s['img'])}" alt="" loading="lazy"><div class="svc-t">{ic(s['icon'])}{tag}<p>{s['d']}</p><span class="more">Más información {ic("arrow")}</span></div></a>"""
+    return f"""<a class="card svc" href="{p}servicio/{s['slug']}.html"><img src="{p}{asset_img(s['img'])}" alt="" loading="lazy"{img_dims(s['img'])}><div class="svc-t">{ic(s['icon'])}{tag}<p>{s['d']}</p><span class="more">Más información {ic("arrow")}</span></div></a>"""
 
 def url_of(path):
     return SITE + "/" if path == "index.html" else f"{SITE}/{path}"
@@ -253,7 +307,7 @@ def build():
 <div class="hg-bot"><p class="hg-small">Nos especializamos en la reparación de ordenadores de sobremesa de todas las marcas, resolviendo problemas de lentitud, fallos de arranque o de placa base. Además, somos apasionados del hardware. Diseñamos tu PC Gaming personalizado pieza a pieza, optimizando cada euro de tu presupuesto para ofrecerte el máximo rendimiento en tus juegos favoritos. Todo ello con componentes de primeras marcas y total garantía.</p>
 <div class="hg-cta"><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div>
 </div>
-<figure class="hg-r"><img src="assets/img/CAJA-ARGB-7-VENT.---11.webp" alt="PC gaming con caja de cristal y ventiladores ARGB" fetchpriority="high">
+<figure class="hg-r"><img src="assets/img/CAJA-ARGB-7-VENT.---11.webp" alt="PC gaming con caja de cristal y ventiladores ARGB" fetchpriority="high"{img_dims("CAJA-ARGB-7-VENT.---11.webp")}>
 
 </figure>
 </div>
@@ -267,11 +321,11 @@ def build():
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
         li = "".join(f"<li>{x}</li>" for x in s["steps"])
-        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s['img'])}" alt="" loading="lazy">{"".join(f"<p>{x}</p>" for x in s['p'])}<h2>Qué incluye</h2><ul class="list">{li}</ul>{f'<p><strong>{s["extra"]}</strong></p>' if s['extra'] else ''}</article>
+        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s['img'])}" alt="{E(s['alt'])}" loading="lazy">{"".join(f"<p>{x}</p>" for x in s['p'])}<h2>Qué incluye</h2><ul class="list">{li}</ul>{f'<p><strong>{s["extra"]}</strong></p>' if s['extra'] else ''}</article>
 <aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "Service", "name": s["t"], "serviceType": s["t"], "description": s["d"], "url": "%%URL%%",
                 "provider": {"@id": SITE + "/#negocio"}, "areaServed": {"@type": "City", "name": CIUDAD}})
-        write(f"servicio/{s['slug']}.html", page("", f"{s['t']} | VRPC", s["d"], body, "servicios.html", 1, img=asset_img(s["img"])))
+        write(f"servicio/{s['slug']}.html", page("", f"{s['t']} | VRPC", s.get("m", s["d"]), body, "servicios.html", 1, img=asset_img(s["img"])))
 
     # ---- Trabajos realizados
     body = head_band([("index.html", "Inicio"), (None, "Trabajos realizados")], "Trabajos realizados") + f"""<section class="wrap sec two"><div><h2>Limpieza interna de un PC Gaming</h2>
@@ -295,11 +349,14 @@ def build():
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
     for c in pcs:
         specs = [x.strip() for x in re.split(r"\.\s+", c["desc"]) if x.strip()]
-        body = head_band([("../index.html", "Inicio"), ("../pc-gaming.html", "PC Gaming"), (None, E(c["title"]))], E(c["title"])) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover contain" src="../{asset_img(c['img'])}" alt="Caja del equipo {E(c['title'])}">
+        body = head_band([("../index.html", "Inicio"), ("../pc-gaming.html", "PC Gaming"), (None, E(c["title"]))], E(c["title"])) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover contain" src="../{asset_img(c['img'])}" alt="Caja del equipo {E(c['title'])}"{img_dims(c['img'])}>
 <p class="price">{c['price']} € <small>precio sin descuento</small></p><ul class="list">{"".join(f"<li>{E(x.rstrip('.'))}</li>" for x in specs)}</ul>
 <ul class="list"><li>Montaje bajo pedido</li><li>Windows 11 Pro licencia oficial (según configuración)</li></ul><p class="muted">Precios de referencia (última actualización conocida: 31-07-26). Confirma disponibilidad y plazo de entrega al pedir cita.</p></article>
 <aside class="card side"><h2 class="h3">Pide cita para este equipo</h2><p>Te confirmamos precio, plazo de entrega y posibles cambios de componentes.</p><a class="btn" href="{WA}?text={E(c['title'].replace(' ','%20'))}">{ic("wa")}Consultar por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>"""
-        write(f"pc/{c['slug']}.html", page("", f"{c['title']} | PC Gaming VRPC", c["desc"][:155], body, "pc-gaming.html", 1, img=asset_img(c["img"])))
+        pc_title = f"{c['title']} | PC Gaming VRPC"
+        if len(pc_title) > 60:
+            pc_title = f"{c['title']} | VRPC"
+        write(f"pc/{c['slug']}.html", page("", pc_title, c["desc"][:155], body, "pc-gaming.html", 1, img=asset_img(c["img"])))
 
     # ---- Blog
     bc = "".join(f"""<a class="card post" href="blog/{b['slug']}.html"><img src="{asset_img(b['img'])}" alt="" loading="lazy"><div class="pc-b"><span class="cat">{b['cat']}</span><h2 class="h3">{b['t']}</h2><p>{b['d']}</p></div></a>""" for b in BLOG)
@@ -308,7 +365,7 @@ def build():
     for b in BLOG:
         more = "".join(f'<a class="more row" href="{o["slug"]}.html">{o["t"]} {ic("arrow")}</a>' for o in BLOG if o is not b)
         secs = "".join(f"<h2>{h}</h2><p>{t}</p>" for h, t in b["sections"])
-        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="" loading="lazy">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>"""
+        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" loading="lazy">{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>"""
         write(f"blog/{b['slug']}.html", page("", f"{b['t']} | Blog VRPC", b["d"], body, "blog.html", 1, img=asset_img(b["img"])))
 
     # ---- Contacto / ubicación / legales
@@ -317,7 +374,7 @@ def build():
 <div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>"""
     write("contacto.html", page("", "Contacto | VRPC", "Contacto y cita previa en VENTAREPARACIONPC, L'Hospitalet de Llobregat.", body, "contacto.html", extra_head=negocio_ld()))
     body = head_band([("index.html", "Inicio"), (None, "Ubicación")], "Ubicación") + f'<section class="wrap sec"><div class="card box"><p>{DIR}</p><p>Atención con cita previa. Teléfono: <a href="{TEL_LINK}">{TEL}</a></p><a class="btn" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div></section>'
-    write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde estamos: L'Hospitalet de Llobregat.", body, extra_head=negocio_ld()))
+    write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde está VentaReparacionPC: Carrer de les Aigües del Llobregat, 115, interior, 08906 L'Hospitalet de Llobregat. Atención con cita previa.", body, extra_head=negocio_ld()))
     for slug, t in (("aviso-legal", "Aviso legal"), ("politica-de-cookies", "Política de cookies")):
         body = head_band([("index.html", "Inicio"), (None, t)], t) + '<section class="wrap sec"><div class="card box"><p>Texto pendiente de completar con los datos del titular. (Aquí se migrará el texto legal de la web actual.)</p></div></section>'
         write(f"{slug}.html", page("", f"{t} | VRPC", t, body))
