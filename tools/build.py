@@ -250,7 +250,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 <link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
 <body{" class=\"solo\"" if solo else ""}><a class="skip" href="#main">Saltar al contenido</a>
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
-<button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
+<button type="button" class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
 <a class="btn small desk-only" href="{WA}">{ic("cal")}Pedir cita</a><div class="nav-ov" id="nav-ov" aria-hidden="true"></div></div></header>
 <div class="draft-tag" role="note">Borrador de diseño</div><main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}<script src="{p}assets/js/main.js"></script></body></html>"""
@@ -343,7 +343,7 @@ def build():
 
     # ---- PC Gaming
     cards = "".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
-    body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button class="chip on" data-f="all">Todos</button><button class="chip" data-f="AMD">AMD Ryzen</button><button class="chip" data-f="Intel">Intel</button></div>
+    body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button type="button" class="chip on" data-f="all">Todos</button><button type="button" class="chip" data-f="AMD">AMD Ryzen</button><button type="button" class="chip" data-f="Intel">Intel</button></div>
 <div class="searchrow"><label for="q">Buscar</label><div><input id="q" type="search" placeholder="Por ejemplo, Ryzen 7 o RTX 5070"><span id="count" aria-live="polite">{len(pcs)} resultados</span></div></div>
 <div class="g4" id="grid">{cards}</div></section>"""
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
