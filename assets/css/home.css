@@ -620,7 +620,7 @@
 
     /* Lienzo del PC: cristal oscuro tipo vitrina para que brille el ARGB */
     .rig {
-      position: relative; height: min(76vh, 720px); border-radius: 28px;
+      position: relative; height: min(76vh, 720px); height: min(76svh, 720px); border-radius: 28px;
       background: radial-gradient(ellipse 80% 70% at 50% 40%, #1b2a4a 0%, #0b1428 100%);
       box-shadow: 0 30px 64px rgba(15, 42, 92, .28), inset 0 1px 0 rgba(255,255,255,.08);
       display: grid; place-items: center; overflow: hidden;
@@ -704,7 +704,7 @@
        ===================================================================== */
     .s3 { max-width: 1640px; margin: clamp(56px, 7vw, 130px) auto 0; padding: 0 clamp(20px, 3.6vw, 72px) 48px; }
     .s3-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(32px, 3vw, 48px); align-items: start; }
-    .s3 .rig { height: min(56vh, 560px); width: auto; aspect-ratio: 560 / 620; max-width: 36vw; }
+    .s3 .rig { height: min(56vh, 560px); height: min(56svh, 560px); width: auto; aspect-ratio: 560 / 620; max-width: 36vw; }
     .s3 .rig svg { width: 88%; height: 88%; }
     .s3-head { min-width: 0; }
     .s3-head .s3-eb { margin: 0 0 8px; }

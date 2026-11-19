@@ -142,7 +142,7 @@ figcaption{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight
 .post{color:var(--ink);overflow:hidden;display:block}.post:hover{text-decoration:none}.post img{aspect-ratio:16/9;object-fit:cover;width:100%}.post .pc-b{padding:14px 16px 18px}.post p{font-size:13px;color:var(--mut);margin:4px 0 0}.cat{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--bl2)}
 .cta{background:linear-gradient(90deg,#1f6be0,#0f3f8e);color:#fff}.cta-in{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:22px;padding-bottom:22px;flex-wrap:wrap}.cta h2{margin:0;font-size:22px}.cta p{margin:2px 0 0;opacity:.85;font-size:13px}.cta .btns{margin:0}
 .foot{background:#f7f9fd;font-size:12.5px}.foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px;align-items:center}.foot nav{display:flex;gap:18px;flex-wrap:wrap}.foot span{color:var(--mut)}
-.lb{position:fixed;inset:0;background:rgba(10,20,40,.88);display:grid;place-items:center;z-index:50;cursor:zoom-out;padding:20px}.lb img{max-height:90vh;border-radius:8px}
+.lb{position:fixed;inset:0;background:rgba(10,20,40,.88);display:grid;place-items:center;z-index:50;cursor:zoom-out;padding:20px}.lb img{max-height:90vh;max-height:90dvh;border-radius:8px}
 
 /* ---------- 5. Hero de la home (móvil: todo apilado y con scroll) ---------- */
 .hg{box-sizing:border-box;min-height:0;padding:88px 16px 24px;display:flex;background:linear-gradient(100deg,#eaf1ff 0%,#f4f8ff 52%,#ffffff 100%);border-bottom:1px solid var(--line)}
