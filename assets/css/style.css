@@ -280,3 +280,6 @@ h2{font-size:clamp(30px,2vw,38px)}
 
 /* Etiqueta de borrador (quitar al publicar la web definitiva) */
 .draft-tag{position:fixed;z-index:60;left:14px;bottom:14px;background:#0f2a5c;color:#fff;font:700 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;padding:8px 13px;border-radius:99px;opacity:.92;pointer-events:none}
+
+/* Zonas táctiles de 44 px en móvil/tablet: el pie crece un poco, sin cambiar escritorio */
+@media(max-width:960px){.foot nav{gap:0 6px}.foot nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}}

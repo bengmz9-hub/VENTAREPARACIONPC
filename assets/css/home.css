@@ -924,3 +924,9 @@
     /* Mismo hueco visual entre pantallas: fin de contenido -> inicio de contenido = 118 px
        (hero 26 px abajo + Pantalla 2 92 px arriba  ==  Pantalla 2 28 px abajo + Pantalla 3 96 px arriba - 6 px) */
     @media (min-width: 961px) { .s3 { margin-top: -6px; } }
+
+    /* Zonas táctiles de 44 px en móvil/tablet sin mover el diseño: relleno vertical compensado con margen negativo */
+    @media (max-width: 960px) {
+      .lg-sec-head a, .lg-head a { padding-block: 13px; margin-block: -13px; }
+      .again::after { content: ""; position: absolute; inset: -9px -6px; }
+    }
