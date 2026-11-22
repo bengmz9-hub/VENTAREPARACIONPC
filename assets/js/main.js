@@ -109,7 +109,7 @@
 })();
 
 // Reseñas: la cuadrícula estática se convierte en dos filas en movimiento (la 2.ª, en sentido contrario y con reseñas distintas a la 1.ª).
-// Si el sistema pide menos movimiento, se deja la cuadrícula y un botón permite verlas en movimiento; si no, arrancan solas y el botón las pausa.
+// Arrancan siempre solas, sin botones ni paneles. Sin JavaScript queda la cuadrícula estática.
 // El HTML conserva cada reseña una sola vez; las únicas copias que se crean aquí son las del bucle de cada fila, con aria-hidden.
 (function () {
   var m = document.querySelector('[data-marquee]');
@@ -117,7 +117,6 @@
   var grid = m.querySelector('.rv-grid');
   var cards = grid ? [].slice.call(grid.children) : [];
   if (cards.length < 3) return;
-  var reducido = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var el = function (c, a) { var d = document.createElement('div'); d.className = c; if (a) for (var k in a) d.setAttribute(k, a[k]); return d; };
   var fila = function (lista, rev, dur, ocultaTodo) {
     var r = el('rv-row' + (rev ? ' rv-rev' : '')), t = el('rv-track');
@@ -131,22 +130,9 @@
   };
   // Cada fila lleva reseñas distintas: la mitad de arriba y la mitad de abajo (nunca se repite una entre filas).
   var n = Math.ceil(cards.length / 2), arriba = cards.slice(0, n), abajo = cards.slice(n);
-  var vivo = false;
-  var montar = function () {
-    m.classList.add('is-live'); m.classList.remove('rv-paused'); vivo = true;
-    m.replaceChildren(fila(arriba, false, arriba.length * 11 + 's', false), fila(abajo, true, abajo.length * 11 + 's', false));
-    window.dispatchEvent(new Event('rv-montado'));
-  };
-  var btn = document.createElement('button');
-  btn.type = 'button'; btn.className = 'btn ghost rv-ctl';
-  var texto = function () { btn.textContent = !vivo ? 'Ver en movimiento' : (m.classList.contains('rv-paused') ? 'Reanudar movimiento' : 'Pausar movimiento'); };
-  btn.addEventListener('click', function () {
-    if (!vivo) { m.classList.add('rv-force'); montar(); } else m.classList.toggle('rv-paused');
-    texto();
-  });
-  m.parentNode.insertBefore(btn, m.nextSibling);
-  if (!reducido) montar();
-  texto();
+  m.classList.add('is-live');
+  m.replaceChildren(fila(arriba, false, arriba.length * 11 + 's', false), fila(abajo, true, abajo.length * 11 + 's', false));
+  window.dispatchEvent(new Event('rv-montado'));
 })();
 
 // Reseñas: las tarjetas tienen altura limitada; si el texto no cabe, se difumina por abajo (clase is-cut). El texto completo sigue en el HTML.
