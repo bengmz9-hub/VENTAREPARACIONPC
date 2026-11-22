@@ -436,7 +436,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{base_head}
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><meta name="robots" content="{robots}">
 {seo}
-{icons}<link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}{SPEC_RULES}</head>
+{icons}<link rel="stylesheet" href="{p}assets/css/{"home" if active == "index.html" else "style"}.min.css">{extra_head}{SPEC_RULES}</head>
 <body{body_cls}>{skip}
 
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
@@ -480,6 +480,62 @@ def svc_card(s, p="", h="h3"):
 def url_of(path):
     return SITE + "/" if path == "index.html" else f"{SITE}/{path}"
 
+def min_css(t):
+    """Minifica CSS sin cambiar su significado: quita comentarios y espacios sobrantes.
+    Recorre el texto carácter a carácter para respetar cadenas ("..." y '...') y url(...)."""
+    out, i, n = [], 0, len(t)
+    while i < n:
+        c = t[i]
+        if c == "/" and t[i + 1:i + 2] == "*":
+            j = t.find("*/", i + 2)
+            i = n if j < 0 else j + 2
+            out.append(" ")
+        elif c in "\"'":
+            j = i + 1
+            while j < n and t[j] != c:
+                j += 2 if t[j] == "\\" else 1
+            out.append(t[i:j + 1])
+            i = j + 1
+        elif t.startswith("url(", i):
+            j = t.find(")", i)
+            out.append(t[i:j + 1])
+            i = j + 1
+        else:
+            out.append(c)
+            i += 1
+    r = re.sub(r"\s+", " ", "".join(out))
+    # los operadores de calc() necesitan sus espacios: solo se recortan { } ; , y el espacio tras ':'
+    r = re.sub(r"\s*([{};,])\s*", r"\1", r)
+    r = re.sub(r":\s+", ":", r)
+    r = r.replace(";}", "}")
+    return r.strip()
+
+def build_css():
+    css = ROOT / "assets" / "css"
+    base = (css / "style.css").read_text(encoding="utf-8")
+    home = (css / "home.css").read_text(encoding="utf-8")
+    (css / "style.min.css").write_text(min_css(base), encoding="utf-8")
+    (css / "home.min.css").write_text(min_css(base + "\n" + home), encoding="utf-8")
+
+
+def responsive_imgs(h):
+    """Añade srcset/sizes a las <img> de assets/img que tienen versiones reducidas (-wNNN.webp).
+    Las versiones las genera tools/optimizar_imagenes.py."""
+    def rep(m):
+        tag, name = m.group(0), m.group(1)
+        if "srcset=" in tag:
+            return tag
+        stem = name[:-5]
+        vs = sorted(int(re.search(r"-w(\d+)\.webp$", p.name).group(1)) for p in IMG.glob(stem + "-w*.webp"))
+        wm = re.search(r'\swidth="(\d+)"', tag)
+        if not vs or not wm:
+            return tag
+        parts = [f"assets/img/{stem}-w{w}.webp {w}w" for w in vs] + [f"assets/img/{name} {wm.group(1)}w"]
+        sizes = "(max-width: 960px) 92vw, 560px" if 'fetchpriority="high"' in tag else "(max-width: 960px) 40vw, 300px"
+        return tag.replace(f'src="assets/img/{name}"', f'src="assets/img/{name}" srcset="{", ".join(parts)}" sizes="{sizes}"', 1)
+    return re.sub(r'<img [^>]*?src="assets/img/([^"/]+\.webp)"[^>]*>', rep, h)
+
+
 def write(path, content):
     if "%%URL%%" in content:   # página real: URL canónica, migas absolutas y entrada en el sitemap
         base = url_of(path)
@@ -497,6 +553,7 @@ def write_redirect(old, new):
                f'<body><p>Esta página se ha trasladado a <a href="{new}">{url_of(new.split("#")[0])}</a>.</p></body></html>')
 
 def build():
+    build_css()
     IMG.mkdir(parents=True, exist_ok=True)
     pcs = load_pcs()
     main_s = [s for s in SERVICES if s.get("main")]
@@ -519,7 +576,8 @@ def build():
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
 """ + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home()
-    write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<link rel="stylesheet" href="assets/css/home.css"><script src="assets/js/home.js" defer></script>'))
+    body = responsive_imgs(body)
+    write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
@@ -534,8 +592,8 @@ def build():
 
     # ---- Trabajos realizados
     body = head_band([("index.html", "Inicio"), (None, "Trabajos realizados")], "Trabajos realizados") + f"""<section class="wrap sec two"><div><h2>Limpieza interna de un PC Gaming</h2>
-<div class="ba-g"><figure class="card"><img src="assets/img/antes.jpg" alt="Interior del PC con polvo acumulado" loading="lazy" data-zoom{img_dims("antes.jpg")}><figcaption>{ic("alert","r")}Antes del mantenimiento{ic("zoom","z")}</figcaption></figure>
-<figure class="card"><img src="assets/img/despues.jpg" alt="Interior del PC limpio" loading="lazy" data-zoom{img_dims("despues.jpg")}><figcaption>{ic("check","g")}Después del mantenimiento{ic("zoom","z")}</figcaption></figure></div>
+<div class="ba-g"><figure class="card"><img src="assets/img/antes.webp" alt="Interior del PC con polvo acumulado" loading="lazy" data-zoom{img_dims("antes.webp")}><figcaption>{ic("alert","r")}Antes del mantenimiento{ic("zoom","z")}</figcaption></figure>
+<figure class="card"><img src="assets/img/despues.webp" alt="Interior del PC limpio" loading="lazy" data-zoom{img_dims("despues.webp")}><figcaption>{ic("check","g")}Después del mantenimiento{ic("zoom","z")}</figcaption></figure></div>
 <p class="muted">Las fotos muestran el interior del equipo antes y después de retirar el polvo acumulado. Pulsa en cualquiera para ampliarla.</p></div>
 <aside><div class="card side"><h3>Pide cita para tu equipo</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
 <div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>"""
