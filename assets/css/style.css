@@ -10,7 +10,7 @@
 
 /* ---------- 1. Base común (móvil) ---------- */
 :root{--bl:#1d5fd1;--bl2:#1749a8;--navy:#0f2a5c;--ink:#14213d;--mut:#5b6b85;--bg:#fff;--soft:#eef4ff;--line:#e3e9f4;--r:10px}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:96px}
 body{margin:0;font:15px/1.5 "Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);background:var(--bg)}
 img{max-width:100%;display:block}a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 h1,h2,h3{line-height:1.15;margin:0 0 .4em;letter-spacing:-.01em}h1{font-size:clamp(30px,4.5vw,46px)}h2{font-size:clamp(22px,2.6vw,30px)}h3{font-size:16px}
@@ -286,3 +286,43 @@ h2{font-size:clamp(30px,2vw,38px)}
 
 /* Portada de ficha: reserva su espacio antes de cargar (evita salto de diseño); la de PC ya tiene alto fijo */
 .cover{aspect-ratio:1/1}.cover.contain{aspect-ratio:auto}
+
+/* ---------- 5. Textos legales ---------- */
+.legal{max-width:880px;margin:0 auto;padding:28px 30px}
+.legal h2{font-size:18px;margin:26px 0 8px;color:var(--navy)}.legal h2:first-of-type{margin-top:8px}
+.legal p,.legal li{font-size:15px;line-height:1.65;color:var(--ink)}.legal ul{padding-left:20px;margin:8px 0 12px}.legal li{margin:5px 0}
+.legal .upd{font-size:13px;color:var(--mut);margin:0 0 6px}
+mark.pend{background:#fff1a8;color:#5c4400;padding:1px 6px;border-radius:5px;font-weight:700}
+
+/* ---------- 6. Reseñas de Google ---------- */
+.rv{padding:72px 0 56px}.rv h2{font-size:clamp(26px,3vw,36px);margin:0 0 20px;color:var(--navy)}
+.rv-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 28px}
+.rv-badge{display:flex;align-items:center;gap:16px}
+.rv-score{font-size:52px;font-weight:800;line-height:1;color:var(--navy)}
+.rv-stars{display:flex;gap:2px;color:#f5a623}.rv-stars .ic{width:20px;height:20px;fill:currentColor;stroke:none}
+.rv-sub{margin:4px 0 0;font-size:14px;color:var(--mut)}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.rv-card{margin:0;padding:22px;display:flex;flex-direction:column;gap:12px}
+.rv-card blockquote{margin:0;flex:1}.rv-card blockquote p{margin:0;font-size:15px;line-height:1.6;color:var(--ink)}
+.rv-card figcaption{font-size:13px;color:var(--mut)}.rv-card .rv-stars .ic{width:16px;height:16px}
+.rv-card.ph{border-style:dashed}
+.rv-page{padding-top:28px}
+@media(max-width:960px){.rv{padding:48px 0 36px}.rv-grid{grid-template-columns:1fr}.rv-score{font-size:44px}}
+
+/* ---------- 7. Barra flotante inferior (solo móvil, como en verstats): flecha ↑, Llamar y Pedir cita ---------- */
+.m-bar{display:none}
+@media(max-width:960px){
+body{padding-bottom:84px}
+.m-bar{display:flex;position:fixed;left:14px;right:14px;bottom:14px;z-index:95;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(29,95,209,.28);border-radius:16px;box-shadow:0 8px 24px rgba(15,42,92,.28);opacity:0;visibility:hidden;transform:translateY(80px);transition:opacity .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1),visibility 0s linear .35s}
+.m-bar.visible{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.m-bar.visible.away{opacity:0;visibility:hidden;transform:translateY(80px);transition-delay:0s,0s,.35s}
+.m-info{min-width:0}.m-info b{display:block;font-size:14px;line-height:1.2;color:var(--navy)}.m-info span{display:block;font-size:11.5px;color:var(--mut);white-space:nowrap}
+.m-act{display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end}
+.m-up{display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border-radius:10px;background:var(--soft);border:1px solid rgba(29,95,209,.35);color:var(--bl);-webkit-tap-highlight-color:transparent}
+.m-btn{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;border-radius:10px;font-weight:700;font-size:13.5px;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.m-btn:hover{text-decoration:none}.m-btn .ic{width:18px;height:18px}
+.m-btn.call{background:var(--bl);color:#fff}.m-btn.wa{background:#25d366;color:#06402d}
+.m-up:focus-visible,.m-btn:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+}
+@media(max-width:480px){.m-info{display:none}}
+@media(prefers-reduced-motion:reduce){.m-bar{transition:none}}

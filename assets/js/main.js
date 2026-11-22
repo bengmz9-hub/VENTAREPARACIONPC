@@ -27,6 +27,16 @@
       if (o) cerrarSubs(li);
     });
   });
+  // Móvil: tocar el propio texto de una opción con desplegable lo abre (no navega); la página principal queda dentro del desplegable
+  // («Ver todos los servicios», «Todos los equipos»). En escritorio el enlace navega y el submenú sale al pasar el ratón.
+  var movil = window.matchMedia('(max-width: 960px)');
+  [].forEach.call(document.querySelectorAll('.has-sub > a'), function (a) {
+    a.addEventListener('click', function (e) {
+      if (!movil.matches) return;
+      var t = a.parentNode.querySelector('.sub-t'); if (!t) return;
+      e.preventDefault(); e.stopPropagation(); t.click();
+    });
+  });
   var grid = document.getElementById('grid');
   if (grid) {
     var cards = [].slice.call(grid.children), f = 'all', q = '', c = document.getElementById('count');
@@ -61,4 +71,29 @@
     d.onclick = function () { d.remove(); document.removeEventListener('keydown', h); };
     document.addEventListener('keydown', h); document.body.appendChild(d);
   });
+})();
+
+// Barra flotante inferior (solo móvil; mismo comportamiento que la landing de verstats): aparece tras 380 px de scroll,
+// se esconde al bajar y reaparece al subir. Lleva Llamar, Pedir cita y una flecha ↑ que vuelve al inicio.
+(function () {
+  var bar = document.getElementById('m-bar'), up = document.getElementById('m-up');
+  if (!bar) return;
+  var last = window.scrollY, raf = false;
+  if (up) up.addEventListener('click', function () {
+    var quiet = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: quiet ? 'auto' : 'smooth' });
+  });
+  var update = function () {
+    var y = window.scrollY;
+    if (y > 380) {
+      bar.classList.add('visible');
+      if (y - last > 10 && y > 500) bar.classList.add('away');
+      else if (last - y > 10) bar.classList.remove('away');
+    } else {
+      bar.classList.remove('visible', 'away');
+    }
+    last = y; raf = false;
+  };
+  window.addEventListener('scroll', function () { if (!raf) { raf = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
 })();

@@ -6,6 +6,8 @@ los datos en data/pcs.json; después ya no hace falta 'varios/'."""
 import html, json, re, shutil, struct, sys
 from pathlib import Path
 from urllib.parse import urljoin
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import legal   # textos legales (tools/legal.py)
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "varios" / "sitio"
@@ -64,6 +66,7 @@ def load_pcs():
             body = re.sub(r"<script.*?</script>|<style.*?</style>", "", s[s.find("<body"):], flags=re.S)
             tx = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", body)))
             desc = re.findall(r'name="description" content="(.*?)"', s)[0]
+            desc = desc.replace("Core Ultra 7 225F", "Core Ultra 5 225F")   # error heredado de la web antigua: el 225F es un Core Ultra 5
             price = re.findall(r"Precio sin descuento\s*([\d\.]+) €", tx)[0]
             name = f.stem.rstrip(".")
             # nombre legible a partir del nombre del archivo
@@ -252,6 +255,47 @@ def trim_meta(text, limit=155, min_len=110):
     return cand
 
 # ------------------------------------------------------------------ plantilla
+# Carga anticipada (Speculation Rules): prefetch moderado de enlaces internos al pasar el ratón; no es JS.
+SPEC_RULES = ('<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},'
+              '{"not":{"selector_matches":"[rel~=nofollow]"}}]},"eagerness":"moderate"}]}</script>')
+
+# Reseñas de Google. Datos a confirmar con Jose antes del lanzamiento (nota/total son los que él indica; la fecha debe ser la de la consulta).
+# escribir = enlace de Google para dejar una reseña (https://search.google.com/local/writereview?placeid=...); sin él, el botón no se muestra.
+RES = dict(nota="4,9", total="casi 300", fecha=None, escribir=None)
+# Reseñas reales copiadas de la ficha de Google, una por elemento: {"texto": "...", "autor": "María G.", "fecha": "octubre 2026", "url": "https://..."}
+RESENAS = []
+
+def reviews_block():
+    stars = ic("star") * 5
+    fecha = f" · a fecha de {E(RES['fecha'])}" if RES["fecha"] else ""
+    escribir = f'<a class="btn ghost" href="{E(RES["escribir"])}" rel="noopener">{ic("star")}Dejar una opinión</a>' if RES["escribir"] else ""
+    head = (f'<div class="rv-head"><div class="rv-badge"><span class="rv-score">{E(RES["nota"])}</span><div>'
+            f'<div class="rv-stars" role="img" aria-label="Valoración de {E(RES["nota"])} sobre 5">{stars}</div>'
+            f'<p class="rv-sub">{E(RES["total"])} opiniones en Google{fecha}</p></div></div>'
+            f'<div class="btns"><a class="btn" href="{MAPS}" rel="noopener">Ver todas en Google {ic("arrow")}</a>{escribir}</div></div>')
+    if RESENAS:
+        cards = "".join(
+            f'<figure class="card rv-card"><div class="rv-stars" aria-hidden="true">{stars}</div><blockquote><p>{E(r["texto"])}</p></blockquote>'
+            f'<figcaption>{E(r["autor"])} · {E(r["fecha"])}'
+            + (f' · <a href="{E(r["url"])}" rel="noopener">Ver en Google</a>' if r.get("url") else "") + '</figcaption></figure>'
+            for r in RESENAS)
+    else:
+        ph = '<figure class="card rv-card ph"><div class="rv-stars" aria-hidden="true">' + stars + '</div><blockquote><p><mark class="pend">[PENDIENTE: texto de una reseña real de Google]</mark></p></blockquote><figcaption><mark class="pend">[Nombre · mes y año]</mark></figcaption></figure>'
+        cards = ph * 3
+    return head + f'<div class="rv-grid">{cards}</div>'
+
+# Barra flotante inferior (solo móvil, ≤960px; mismo patrón que la landing de verstats): flecha ↑ al inicio, Llamar y Pedir cita. Lógica en assets/js/main.js.
+MOBILE_BAR = (
+    '<aside class="m-bar" id="m-bar" aria-label="Contacto rápido"><div class="m-info"><b>VRPC</b><span>Servicio técnico de PC</span></div>'
+    '<div class="m-act"><button type="button" class="m-up" id="m-up" aria-label="Volver arriba"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" '
+    'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg></button>'
+    f'<a class="m-btn call" href="{TEL_LINK}" aria-label="Llamar al taller">{ic("phone")}<span>Llamar</span></a>'
+    f'<a class="m-btn wa" href="{WA}" rel="noopener" aria-label="Pedir cita por WhatsApp">{ic("wa")}<span>Pedir cita</span></a></div></aside>')
+
+def reviews_home():
+    return ('\n<section class="rv" id="opiniones" aria-labelledby="rv-title"><div class="wrap"><p class="kicker">Opiniones</p>'
+            f'<h2 id="rv-title">Lo que dicen quienes ya nos han visitado</h2>{reviews_block()}</div></section>\n')
+
 def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False, solo=False, img=None, og_type="website", img_alt=None, is_404=False):
     p = "../" * depth
     robots = "noindex, nofollow" if is_404 else ("index, follow, max-image-preview:large" if INDEXAR else "noindex, nofollow")
@@ -285,13 +329,13 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{base_head}
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><meta name="robots" content="{robots}">
 {seo}
-{icons}<link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}</head>
+{icons}<link rel="stylesheet" href="{p}assets/css/style.css">{extra_head}{SPEC_RULES}</head>
 <body{" class=\"solo\"" if solo else ""}>{skip}
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button type="button" class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
 <a class="btn small desk-only" href="{WA}">{ic("cal")}Pedir cita</a><div class="nav-ov" id="nav-ov" aria-hidden="true"></div></div></header>
-<div class="draft-tag" role="note">Borrador de diseño</div><main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}<script src="{p}assets/js/main.js"></script></body></html>"""
+<div class="draft-tag" role="note">Borrador de diseño</div><main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}{"" if (solo or is_404) else MOBILE_BAR}<script src="{p}assets/js/main.js" defer></script></body></html>"""
 
 def head_band(crumbs, h1, sub=""):
     c = " <span>›</span> ".join(f'<a href="{h}">{t}</a>' if h else f"<span>{t}</span>" for h, t in crumbs)
@@ -350,7 +394,7 @@ def build():
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8")
+""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home()
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<link rel="stylesheet" href="assets/css/home.css"><script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
@@ -375,7 +419,8 @@ def build():
     write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Ejemplos de trabajos realizados en el taller: antes y después de una limpieza interna de PC Gaming.", body, "trabajos-realizados.html"))
 
     # ---- Opiniones
-    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec two"><div class="card rev big"><div class="rev-i">{ic("star")}</div><div><h2 class="h3">VENTAREPARACIONPC en Google</h2><p>Consulta las valoraciones en nuestra ficha de L'Hospitalet.</p><a class="more" href="{MAPS}" rel="noopener">Abrir ficha de Google Maps {ic("arrow")}</a></div></div>
+    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block()}</section>
+<section class="wrap sec">
 <aside class="card side"><h2 class="h3">Conoce el taller</h2><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a><a class="more row" href="ubicacion.html">Ubicación {ic("arrow")}</a><a class="more row" href="contacto.html">Contacto {ic("arrow")}</a></aside></section>"""
     write("opiniones.html", page("", "Opiniones de clientes | VRPC", "Opiniones de clientes de VENTAREPARACIONPC en Google.", body, "opiniones.html"))
 
@@ -417,8 +462,10 @@ def build():
     write("contacto.html", page("", "Contacto | VRPC", "Contacto y cita previa en VENTAREPARACIONPC, L'Hospitalet de Llobregat.", body, "contacto.html", extra_head=negocio_ld()))
     body = head_band([("index.html", "Inicio"), (None, "Ubicación")], "Ubicación") + f'<section class="wrap sec"><div class="card box"><p>{DIR}</p><p>Atención con cita previa. Teléfono: <a href="{TEL_LINK}">{TEL}</a></p><a class="btn" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div></section>'
     write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde está VentaReparacionPC: Carrer de les Aigües del Llobregat, 115, interior, 08906 L'Hospitalet de Llobregat. Atención con cita previa.", body, extra_head=negocio_ld()))
-    for slug, t in (("aviso-legal", "Aviso legal"), ("politica-de-cookies", "Política de cookies")):
-        body = head_band([("index.html", "Inicio"), (None, t)], t) + '<section class="wrap sec"><div class="card box"><p>Texto pendiente de completar con los datos del titular. (Aquí se migrará el texto legal de la web actual.)</p></div></section>'
+    # Textos legales: ver tools/legal.py (datos del titular en DATOS; lo que falte sale marcado como PENDIENTE)
+    legal.PENDIENTES.clear()
+    for slug, t, fn in (("aviso-legal", "Aviso legal", legal.aviso_legal), ("politica-de-cookies", "Política de cookies", legal.cookies)):
+        body = head_band([("index.html", "Inicio"), (None, t)], t) + fn()
         write(f"{slug}.html", page("", f"{t} | VRPC", t, body))
 
     # ---- 404 (fuera de sitemap, sin canonical, noindex siempre, rutas resueltas via <base>)
@@ -439,8 +486,12 @@ def build():
     redirects.setdefault("ryzen-7-7800x3d-rtx5070-32-gb-1-tb-r.l.-a.html", "pc/ryzen-7-7800x3d-rtx5070-32-gb-1-tb-r-l.html")
     for old, new in redirects.items():
         write_redirect(old, new)
-    legales = {"aviso-legal.html", "politica-de-cookies.html"}   # texto aún provisional: fuera del sitemap
+    legales = {"aviso-legal.html", "politica-de-cookies.html"} if legal.PENDIENTES else set()   # con datos pendientes: fuera del sitemap
     urls = "".join(f"<url><loc>{url_of(x)}</loc></url>\n" for x in SITEMAP if x not in legales)
+    if legal.PENDIENTES:
+        print("AVISO legal: faltan datos del titular en tools/legal.py ->", ", ".join(legal.PENDIENTES))
+    if not RESENAS or not RES["fecha"] or not RES["escribir"]:
+        print("AVISO reseñas: pendiente en build.py -> " + ", ".join(k for k, v in (("RESENAS (textos reales)", RESENAS), ("RES['fecha']", RES["fecha"]), ("RES['escribir']", RES["escribir"])) if not v))
     write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
     print("ok", len(pcs), "PCs ·", len(SITEMAP), "páginas ·", len(redirects), "redirecciones ·", "INDEXABLE" if INDEXAR else "noindex")
