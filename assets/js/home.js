@@ -3,10 +3,6 @@
       var topBar = document.querySelector('.top');
       var s2 = document.getElementById('pantalla-2');
       var cue = document.getElementById('scrollCue');
-      var hudLabel = document.getElementById('hudLabel');
-      var hudBar = document.getElementById('hudBar');
-      var hudPct = document.getElementById('hudPct');
-      var motionToggle = document.getElementById('motionToggle');
       if (!s2) return;
 
       /* Seguidor radial especular 2D en tarjetas Liquid Glass (0° 3D tilt) */
@@ -19,12 +15,6 @@
       });
 
       var desktop = window.matchMedia('(min-width: 961px)');
-      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      var motionEnabled = true; /* siempre ON por decisión del cliente, aunque el sistema pida menos movimiento */
-      if (motionToggle && !motionEnabled) {
-        motionToggle.textContent = 'Animación: OFF';
-        motionToggle.setAttribute('aria-pressed', 'false');
-      }
       var curtains = [].slice.call(s2.querySelectorAll('[data-reveal="curtain"]'));
       var cards = [].slice.call(s2.querySelectorAll('[data-reveal="left"]'));
 
@@ -54,37 +44,34 @@
         if (topBar) topBar.classList.toggle('is-scrolled', scrollY > 24);
         if (cue) cue.classList.toggle('is-hidden', scrollY > 36);
 
-        if (!motionEnabled || !desktop.matches || !userScrolled) {
+        if (!desktop.matches || !userScrolled) {
           setStatic();
-          if (hudLabel && hudBar && hudPct) {
-            hudLabel.textContent = motionEnabled && desktop.matches ? 'Esperando scroll' : 'Modo estático';
-            hudBar.style.width = '100%';
-            hudPct.textContent = 'OFF';
-          }
           return;
         }
 
+        /* Fase de lectura de layout (evita layout thrashing al mezclar lecturas y escrituras) */
+        var s2Rect = s2.getBoundingClientRect();
+        var s2Top = s2Rect.top;
+        var s2Bottom = s2Rect.bottom + scrollY;
+        var limitScroll = Math.min(maxScroll, Math.max(0, s2Bottom - vh));
+        var curtainTops = curtains.map(function (el) { return el.getBoundingClientRect().top; });
+
+        /* Fase de escritura en estilos */
         document.documentElement.setAttribute('data-motion', 'on');
         document.documentElement.classList.add('js-scroll');
 
         /* 1) Cortina por elemento basada en su posición real dentro del viewport:
               entra cerrada al 100% por abajo y se abre visiblemente frente al usuario al subir */
-        var totalCurtain = 0;
-        /* Límite = el scroll en que el final de la Pantalla 2 toca el borde inferior de la ventana
-           (justo antes de que empiece a verse la Pantalla 3). Todo el texto debe estar abierto ahí. */
-        var s2Bottom = s2.getBoundingClientRect().bottom + scrollY;
-        var limitScroll = Math.min(maxScroll, Math.max(0, s2Bottom - vh));
-        curtains.forEach(function (el) {
-          var rect = el.getBoundingClientRect();
-          var absTop = rect.top + scrollY;
+        curtains.forEach(function (el, idx) {
+          var rectTop = curtainTops[idx];
+          var absTop = rectTop + scrollY;
           var topAtBottom = absTop - limitScroll;   /* posición de la línea en pantalla en ese límite */
           /* termina 36px de scroll antes del límite, y nunca más arriba del 42% de la ventana */
           var finishY = Math.min(vh, Math.max(vh * 0.42, topAtBottom + 36));
           var startY = Math.min(vh * 1.02, finishY + vh * 0.34);
-          var raw = (startY - rect.top) / Math.max(40, startY - finishY);
+          var raw = (startY - rectTop) / Math.max(40, startY - finishY);
           var t = clamp(raw, 0, 1);
           var e = easeOutCubic(t);
-          totalCurtain += t;
 
           var clipRight = (1 - e) * 100;
           var shiftX = -(1 - e) * 32;
@@ -94,7 +81,6 @@
         });
 
         /* 2) Tarjetas Liquid Glass a la izquierda: aparecen progresivamente al entrar Pantalla 2 */
-        var s2Top = s2.getBoundingClientRect().top;
         var panelProg = clamp((vh * 0.92 - s2Top) / (vh * 0.82), 0, 1);
         cards.forEach(function (el) {
           var idx = parseInt(el.dataset.order || '0', 10);
@@ -107,28 +93,11 @@
           el.style.setProperty('--p-y', ((1 - e) * 16).toFixed(1) + 'px');
           el.style.setProperty('--p-s', (0.96 + e * 0.04).toFixed(4));
         });
-
-        if (hudBar && hudPct && hudLabel) {
-          var avg = curtains.length ? totalCurtain / curtains.length : 0;
-          var pct = Math.round(avg * 100);
-          hudBar.style.width = pct + '%';
-          hudPct.textContent = pct + '%';
-          hudLabel.textContent = pct < 5 ? 'Pantalla 1 · Hero' : (pct < 96 ? 'Cortina activa' : 'Servicio Técnico');
-        }
       }
 
       function onScroll(e) {
         if (e && e.type === 'scroll') userScrolled = true;
         if (!rafId) rafId = window.requestAnimationFrame(update);
-      }
-
-      if (motionToggle) {
-        motionToggle.addEventListener('click', function () {
-          motionEnabled = !motionEnabled;
-          motionToggle.textContent = motionEnabled ? 'Animación: ON' : 'Animación: OFF';
-          motionToggle.setAttribute('aria-pressed', String(motionEnabled));
-          update();
-        });
       }
 
       window.addEventListener('scroll', onScroll, { passive: true });
@@ -161,7 +130,6 @@
       var pct = document.getElementById('rigPct');
       var parts = [].slice.call(sec.querySelectorAll('.part'));
       var items = [].slice.call(document.querySelectorAll('#steps3 li'));
-      var desktop = window.matchMedia('(min-width: 961px)');
       var N = items.length;
       var DURATION = 1500; /* ms: montaje completo a velocidad constante */
       var raf = 0, played = false;
