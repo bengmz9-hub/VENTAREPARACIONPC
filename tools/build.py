@@ -222,6 +222,7 @@ ICONS = {
     "zoom": '<circle cx="10" cy="10" r="5"/><path d="M14 14l5 5"/>',
     "arrow": '<path d="M5 12h14M13 6l6 6-6 6"/>',
     "wa": '<path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 19z"/>',
+    "mail": '<path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm0 1l8 6 8-6"/>',
 }
 def ic(n, cls=""):
     return f'<svg class="ic {cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS[n]}</svg>'
@@ -415,10 +416,21 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
              f'<link rel="apple-touch-icon" href="{p}apple-touch-icon.png" sizes="180x180">')
     skip = "" if is_404 else '<a class="skip" href="#main">Saltar al contenido</a>'
     nav = nav_html(p, active)
-    cta = f"""<section class="cta"><div class="wrap cta-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
+    cta = f"""<section class="ctap"><div class="wrap ctap-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
 <div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot = f"""<footer class="foot"><div class="wrap foot-in"><div><strong>VENTAREPARACIONPC</strong><br><span>L'Hospitalet de Llobregat · {TEL}</span></div>
 <nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
+    cta_h = f"""<section class="ctah"><div class="wrap ctah-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
+<div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
+    foot_h = f"""<footer class="fh"><div class="wrap fh-in">
+<div class="fh-l"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42" loading="lazy"><p>Servicio técnico y PC Gaming a medida en L'Hospitalet de Llobregat.</p>
+<nav class="fh-nav" aria-label="Pie"><a href="{p}servicios.html">Servicios</a><a href="{p}pc-gaming.html">PC Gaming</a><a href="{p}sobre-mi.html">Sobre mí</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}ubicacion.html">Ubicación</a></nav>
+<div class="fh-soc"><a href="{WA}" rel="noopener" aria-label="WhatsApp">{ic("wa")}</a><a href="{TEL_LINK}" aria-label="Llamar">{ic("phone")}</a><a href="mailto:{MAIL}" aria-label="Correo">{ic("mail")}</a><a href="{p}ubicacion.html" aria-label="Ubicación">{ic("pin")}</a></div></div>
+<div class="fh-card"><p class="fh-h">Contacto</p><a class="fh-big" href="mailto:{MAIL}">{MAIL}</a><a class="fh-big" href="{TEL_LINK}">{TEL}</a>
+<address>{CALLE}<br>{CP} {CIUDAD}<br>Con cita previa</address><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a></div>
+<div class="fh-legal"><span>© 2026 VENTAREPARACIONPC</span><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></div></div></footer>"""
+    if active == "index.html":
+        cta, foot = cta_h, foot_h
     body_cls = ' class="solo"' if solo else ""
     return f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{base_head}
