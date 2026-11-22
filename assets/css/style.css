@@ -312,16 +312,12 @@ mark.pend{background:#fff1a8;color:#5c4400;padding:1px 6px;border-radius:5px;fon
 .rv-row{overflow:hidden}
 .rv-track{display:flex;width:max-content;animation:rv-scroll var(--d,60s) linear infinite}
 .rv-rev .rv-track{animation-direction:reverse}
-.rv-marquee.rv-paused .rv-track{animation-play-state:paused}
-.rv-ctl{display:flex;margin:14px auto 0}
 /* Evita el salto de diseño (CLS): antes de que el JS monte el marquee se reserva su misma altura (2 filas de 180px + hueco). Solo con JS y sin preferencia de menos movimiento. */
-@media(prefers-reduced-motion:no-preference) and (scripting:enabled){.rv-marquee:not(.is-live){height:374px;overflow:hidden}}
+@media(scripting:enabled){.rv-marquee:not(.is-live){height:374px;overflow:hidden}}
 .rv-track .rv-set{display:flex;gap:14px;padding-right:14px}
 .rv-track .rv-card{flex:none;width:320px;height:180px;box-sizing:border-box}
 @keyframes rv-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media(max-width:960px){.rv-track .rv-card{width:280px}}
-@media(prefers-reduced-motion:reduce){.rv-marquee:not(.rv-force) .rv-track{animation:none}}
-.rv-page{padding-top:28px}
+@media(max-width:960px){.rv-track .rv-card{width:280px}}.rv-page{padding-top:28px}
 @media(max-width:960px){.rv{padding:48px 0 36px}.rv-grid{grid-template-columns:1fr;grid-auto-rows:auto}.rv-score{font-size:44px}}
 
 /* ---------- 7. Barra flotante inferior (solo móvil, como en verstats): flecha ↑, Llamar y Pedir cita ---------- */
