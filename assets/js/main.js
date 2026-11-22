@@ -97,3 +97,13 @@
   window.addEventListener('scroll', function () { if (!raf) { raf = true; requestAnimationFrame(update); } }, { passive: true });
   update();
 })();
+
+// Menú superior: al bajar más de 24 px pasa de transparente a píldora de cristal (is-scrolled), en todas las páginas.
+// En la portada lo hace también home.js; aquí cubre las páginas interiores (el CSS de escritorio está en style.css, sección 8).
+(function () {
+  var top = document.querySelector('.top');
+  if (!top) return;
+  var f = function () { top.classList.toggle('is-scrolled', window.scrollY > 24); };
+  window.addEventListener('scroll', f, { passive: true });
+  f();
+})();
