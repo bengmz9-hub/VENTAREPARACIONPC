@@ -12,7 +12,7 @@
 :root{--bl:#1d5fd1;--bl2:#1749a8;--navy:#0f2a5c;--ink:#14213d;--mut:#5b6b85;--bg:#fff;--soft:#eef4ff;--line:#e3e9f4;--r:10px}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:96px}
 body{margin:0;font:15px/1.5 "Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-img{max-width:100%;display:block}a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 h1,h2,h3{line-height:1.15;margin:0 0 .4em;letter-spacing:-.01em}h1{font-size:clamp(30px,4.5vw,46px)}h2{font-size:clamp(22px,2.6vw,30px)}h3{font-size:16px}
 /* .h3: encabezado de nivel h2 (orden correcto para SEO) con el tamaño visual de un h3 */
 .h3{font-size:16px}
