@@ -217,3 +217,21 @@
         li.addEventListener('blur', off);
       });
     })();
+
+    /* Pantalla 3 (solo escritorio): centra la caja del montaje con el texto «título → botones».
+       La fila del texto incluye arriba la línea pequeña «PC GAMING A MEDIDA»; la caja se baja la mitad de la distancia
+       entre el inicio de la fila y el título, de modo que su centro coincide con el centro del texto. */
+    (function () {
+      var rig = document.querySelector('.s3 .rig'), title = document.getElementById('s3-title'), row = document.querySelector('.s3-top');
+      if (!rig || !title || !row) return;
+      var desktop = window.matchMedia('(min-width: 961px)');
+      function fit() {
+        if (!desktop.matches) { rig.style.removeProperty('--rig-dy'); return; }
+        var dy = (title.getBoundingClientRect().top - row.getBoundingClientRect().top) / 2;
+        rig.style.setProperty('--rig-dy', Math.max(0, Math.round(dy)) + 'px');
+      }
+      fit();
+      window.addEventListener('resize', fit, { passive: true });
+      window.addEventListener('load', fit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    })();
