@@ -518,11 +518,18 @@ def build_css():
     (css / "home.min.css").write_text(min_css(base + "\n" + home), encoding="utf-8")
 
 
-def responsive_imgs(h):
-    """Añade srcset/sizes a las <img> de assets/img que tienen versiones reducidas (-wNNN.webp).
-    Las versiones las genera tools/optimizar_imagenes.py."""
+def responsive_imgs(h, sizes=None, eager=0):
+    """Añade srcset/sizes a las <img> de assets/img que tienen versiones reducidas (-wNNN.webp,
+    las genera tools/optimizar_imagenes.py). `sizes` fija el atributo sizes de todas; `eager` quita
+    loading="lazy" a las N primeras (las que se ven sin hacer scroll) y da prioridad a la primera."""
+    n = {"i": 0}
     def rep(m):
-        tag, name = m.group(0), m.group(1)
+        tag, pre, name = m.group(0), m.group(1), m.group(2)
+        n["i"] += 1
+        if eager and n["i"] <= eager:
+            tag = tag.replace(' loading="lazy"', "")
+            if n["i"] == 1 and "fetchpriority" not in tag:
+                tag = tag.replace("<img ", '<img fetchpriority="high" ', 1)
         if "srcset=" in tag:
             return tag
         stem = name[:-5]
@@ -530,10 +537,10 @@ def responsive_imgs(h):
         wm = re.search(r'\swidth="(\d+)"', tag)
         if not vs or not wm:
             return tag
-        parts = [f"assets/img/{stem}-w{w}.webp {w}w" for w in vs] + [f"assets/img/{name} {wm.group(1)}w"]
-        sizes = "(max-width: 960px) 92vw, 560px" if 'fetchpriority="high"' in tag else "(max-width: 960px) 40vw, 300px"
-        return tag.replace(f'src="assets/img/{name}"', f'src="assets/img/{name}" srcset="{", ".join(parts)}" sizes="{sizes}"', 1)
-    return re.sub(r'<img [^>]*?src="assets/img/([^"/]+\.webp)"[^>]*>', rep, h)
+        parts = [f"{pre}assets/img/{stem}-w{w}.webp {w}w" for w in vs] + [f"{pre}assets/img/{name} {wm.group(1)}w"]
+        sz = sizes or ("(max-width: 960px) 92vw, 560px" if 'fetchpriority="high"' in tag else "(max-width: 960px) 40vw, 300px")
+        return tag.replace(f'src="{pre}assets/img/{name}"', f'src="{pre}assets/img/{name}" srcset="{", ".join(parts)}" sizes="{sz}"', 1)
+    return re.sub(r'<img [^>]*?src="((?:\.\./)?)assets/img/([^"/]+\.webp)"[^>]*>', rep, h)
 
 
 def write(path, content):
@@ -582,6 +589,7 @@ def build():
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
         f'<section class="wrap sec"><div class="g2 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
+    body = responsive_imgs(body, sizes="(max-width: 960px) 92vw, 45vw", eager=4)
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
         body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + service_article(s) + f"""
@@ -632,6 +640,7 @@ def build():
         pc_title = f"{c['title']} | PC Gaming VRPC"
         if len(pc_title) > 60:
             pc_title = f"{c['title']} | VRPC"
+        body = responsive_imgs(body, sizes="min(92vw, 340px)")
         write(f"pc/{c['slug']}.html", page("", pc_title, trim_meta(c["desc"]), body, "pc-gaming.html", 1, img=asset_img(c["img"]), img_alt=f"Caja del equipo {c['title']}"))
 
     # ---- Blog

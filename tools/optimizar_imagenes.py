@@ -5,11 +5,15 @@
    muestra a un tamaño mucho menor que el original, para usarlas con srcset.
 Usa solo Pillow. No toca los originales webp.
 """
+import re
 from pathlib import Path
 from PIL import Image
 
 IMG = Path(__file__).resolve().parent.parent / "assets" / "img"
 Q = 78
+
+# imágenes grandes que ninguna página usa (no se generan variantes)
+SIN_USO = {"ANTEC-C8---1.webp"}
 
 # imagen -> anchos de las versiones reducidas
 VARIANTES = {
@@ -34,8 +38,20 @@ def a_webp():
         print(f"webp  {src.name} {src.stat().st_size} B -> {dst.name} {dst.stat().st_size} B")
 
 
+def objetivos():
+    """Los de VARIANTES con sus anchos y, además, cualquier webp de 700 px o más (tarjetas de servicios,
+    portadas de las fichas de PC) con las versiones estándar de 320 y 640 px."""
+    res = dict(VARIANTES)
+    for src in sorted(IMG.glob("*.webp")):
+        if re.search(r"-w\d+\.webp$", src.name) or src.name in res or src.name in SIN_USO:
+            continue
+        if Image.open(src).width >= 700:
+            res[src.name] = (320, 640)
+    return res
+
+
 def variantes():
-    for nombre, anchos in VARIANTES.items():
+    for nombre, anchos in objetivos().items():
         src = IMG / nombre
         if not src.exists():
             print("FALTA", nombre)
