@@ -18,6 +18,7 @@ WA = "https://wa.me/34622229795"
 MAIL = "info@ventareparacionpc.es"
 DIR = "Carrer de les Aigües del Llobregat, 115, interior<br>08906 L'Hospitalet de Llobregat, Barcelona"
 MAPS = "https://www.google.com/maps/search/?api=1&query=Carrer+de+les+Aig%C3%BCes+del+Llobregat+115+L%27Hospitalet+de+Llobregat"
+FICHA = "https://www.google.com/maps?cid=4350579911193431217"   # ficha de Google Business (sameAs)
 E = html.escape
 
 # ---------------------------------------------------------------- SEO
@@ -53,7 +54,7 @@ def negocio_ld():
                "telephone": "+34" + TEL.replace(" ", ""), "email": MAIL,
                "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": CIUDAD,
                            "addressRegion": PROVINCIA, "addressCountry": "ES"},
-               "hasMap": MAPS, "areaServed": [CIUDAD, PROVINCIA],
+               "hasMap": MAPS, "sameAs": [FICHA], "areaServed": [CIUDAD, PROVINCIA],
                "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": HORARIO[0], "opens": HORARIO[1], "closes": HORARIO[2]}]})
 
 # ---------------------------------------------------------------- datos de PCs
@@ -98,36 +99,75 @@ def load_pcs():
 
 # ------------------------------------------------------------------ contenido
 SERVICES = [
-    dict(slug="mantenimiento-pc-gaming", t="Mantenimiento PC Gaming", d="Limpieza interna, pasta térmica y revisión de la refrigeración.", img="Mantenimiento-PC-Gaming---6.webp", main=True, icon="fan",
+    dict(slug="mantenimiento-pc-gaming", t="Mantenimiento", d="Limpieza interna, pasta térmica y puesta a punto del sistema. Desde 70 € y plazo aproximado desde 24 h.", img="Mantenimiento-PC-Gaming---6.webp", main=True, icon="fan",
+         m="Mantenimiento de ordenadores en L'Hospitalet: limpieza interna, pasta térmica nueva, optimización de Windows y drivers. Desde 70 € y con un plazo aproximado desde 24 horas, sin volcar tus datos.",
          alt="Técnico aplicando pasta térmica al procesador durante el mantenimiento de un PC Gaming",
-         p=["Con el tiempo el polvo se acumula en filtros, ventiladores y disipadores, y el equipo sube de temperatura y hace más ruido. Hacemos una limpieza interna cuidadosa y revisamos la refrigeración.",
-            "Cambiamos la pasta térmica cuando hace falta, revisamos ventiladores y flujo de aire y comprobamos temperaturas antes y después."],
-         steps=["Limpieza interna de polvo (filtros, ventiladores, disipador)", "Revisión de la refrigeración y del flujo de aire", "Pasta térmica si procede", "Comprobación de temperaturas"],
-         extra="Mantenimiento desde 70 €. Te damos el presupuesto antes de empezar."),
-    dict(slug="actualizacion-pc-gaming", t="Actualización de PC Gaming", d="Amplía la RAM, instala un SSD o cambia la gráfica.", img="TECNICO-INFORMATICO---10--1-.webp", main=True, icon="chart",
+         facts=[("Precio", "Desde 70 €"), ("Plazo", "Desde 24 horas, aproximado"), ("Tus datos", "Sin necesidad de volcarlos")],
+         p=["El polvo y la pasta térmica seca suben la temperatura y el ruido, y le quitan rendimiento al equipo. Un mantenimiento preventivo evita averías y le devuelve la fluidez del primer día."],
+         incl=["Revisión del hardware, de la fuente de alimentación a la placa base (y BIOS si hace falta)",
+               "Limpieza profunda de ventiladores, disipadores y refrigeración líquida o por aire",
+               "Pasta térmica nueva en CPU y gráfica, y thermal pads si procede",
+               "Optimización de Windows: actualizaciones, archivos del sistema y espacio en disco",
+               "Drivers actualizados",
+               "Análisis contra virus y malware"],
+         why_t="Qué consigues", why=["Más velocidad y menos ruido", "Hardware que dura más al evitar el sobrecalentamiento", "Menos riesgo de averías graves y de quedarte sin ordenador"],
+         steps=[], note="El precio se ajusta a cada equipo según sus componentes y te lo damos antes de empezar. Precio mínimo: 70 €. El plazo es orientativo: puede variar según el estado del equipo y la carga de trabajo del taller."),
+    dict(slug="actualizacion-pc-gaming", t="Actualización de PC", d="Más RAM, SSD/NVMe o gráfica nueva, con la compatibilidad comprobada.", img="TECNICO-INFORMATICO---10--1-.webp", main=True, icon="chart",
          alt="Técnico informático revisando componentes y cableado dentro de un PC Gaming en el taller",
-         p=["Si tu PC ya no rinde como antes, a veces basta con cambiar una pieza. Te ayudamos a elegir qué actualizar primero según lo que usas y tu presupuesto.",
-            "Comprobamos la compatibilidad con tu placa, fuente y caja antes de comprar nada."],
-         steps=["Revisión del equipo y de lo que necesitas", "Propuesta de componentes compatibles", "Instalación y pruebas", "Comprobación final de rendimiento"],
-         extra="Cuéntanos modelo y uso y te orientamos."),
-    dict(slug="actualizacion-bios", t="Actualización de BIOS", d="Comprobación del firmware y de la compatibilidad de tu placa base.", img="Actulizacion-BIOS---2_800x800.webp", icon="wrench",
+         facts=[("Presupuesto", "Antes de empezar"), ("Compatibilidad", "Comprobada antes de comprar")],
+         p=["Si tu PC ya no rinde como antes, muchas veces basta con cambiar una pieza. Te ayudamos a elegir qué actualizar primero según lo que usas y tu presupuesto."],
+         incl=["Ampliación de memoria RAM", "Tarjeta gráfica de nueva generación",
+               "Paso de disco duro (HDD) a SSD/NVMe para arrancar y cargar programas mucho más rápido",
+               "Diagnóstico y sustitución de componentes dañados"],
+         why_t="", why=[],
+         steps=["Revisamos tu equipo y lo que necesitas", "Te proponemos piezas compatibles con tu placa, fuente y caja", "Instalamos y probamos", "Comprobamos el rendimiento final"],
+         note="Cuéntanos el modelo y para qué lo usas y te orientamos."),
+    dict(slug="actualizacion-bios", t="Actualización de BIOS", d="Firmware al día para admitir piezas nuevas y ganar estabilidad. 30 €.", img="Actulizacion-BIOS---2_800x800.webp", icon="wrench",
+         m="Actualización de BIOS en L'Hospitalet por 30 €: identificamos tu placa, hacemos copia de seguridad y actualizamos a la última versión oficial estable en un entorno controlado.",
          alt="Portátil mostrando una barra de progreso al 75 % de actualización del sistema, con herramientas de taller alrededor",
-         p=["Una BIOS actualizada puede ser necesaria para admitir un procesador nuevo o corregir fallos. Es una operación delicada: la hacemos comprobando antes la versión y la compatibilidad de tu placa."], steps=["Identificación de placa y versión", "Comprobación de compatibilidad", "Actualización controlada", "Verificación de arranque"], extra=""),
-    dict(slug="asistencia-remota", t="Asistencia remota", d="Ayuda a distancia para incidencias de software.", img="Asistencia-Remota---3_800x800.webp", icon="wrench",
-         m="Asistencia remota para incidencias de software, sistema, programas y configuración: acordamos cita y nos conectamos con tu permiso sin traer el equipo.",
+         facts=[("Precio", "30 €"), ("Alcance", "De la versión de fábrica a la última estable"), ("Seguridad", "Con copia de seguridad previa")],
+         p=["La BIOS (UEFI) es el firmware de tu placa base. Actualizarla es imprescindible para admitir procesadores o memorias más recientes, y además corrige errores y mejora la estabilidad."],
+         incl=["Identificación exacta del modelo y de la revisión de la placa", "Copia de seguridad del firmware actual",
+               "Actualización a la última versión oficial estable, en un entorno controlado",
+               "Ajuste de los parámetros principales de configuración", "Verificación de arranque y estabilidad"],
+         why_t="Para qué sirve", why=["Compatibilidad con procesadores y RAM más recientes", "Mejor comunicación entre componentes: más rendimiento y eficiencia", "Corrección de errores y parches de seguridad"],
+         steps=[], note="Es un proceso delicado: elegir mal la versión o una interrupción pueden dejar la placa inutilizable. Por eso la identificamos con precisión y lo hacemos nosotros."),
+    dict(slug="asistencia-remota", t="Asistencia remota", d="Soluciones de software sin traer el equipo. 30 € la primera hora.", img="Asistencia-Remota---3_800x800.webp", icon="wrench",
+         m="Asistencia remota para incidencias de software, sistema, programas y configuración: 30 € la primera hora, conexión segura y sin traer el equipo.",
          alt="Monitor con icono de engranaje y herramientas que representa la asistencia remota",
-         p=["Para problemas de software (sistema, programas, configuración) podemos ayudarte a distancia sin que tengas que traer el equipo."], steps=["Nos cuentas el problema", "Acordamos cita", "Conexión remota con tu permiso", "Resolución y comprobación"], extra=""),
-    dict(slug="asesoramiento-compra", t="Asesoramiento de compra", d="Elige componentes compatibles con tu presupuesto.", img="ASESORAMIENTO-COMPRA-PC---8.webp", icon="wrench",
-         m="Te ayudamos a elegir componentes compatibles con tu presupuesto, juegos y programas en L'Hospitalet, con comprobación y opción de montaje.",
+         facts=[("Precio", "30 € la primera hora"), ("Después", "Tramos de 30 minutos"), ("Necesitas", "Equipo que encienda y conexión a Internet")],
+         p=["Resolvemos incidencias de software a distancia mediante una conexión remota cifrada. Tú ves en pantalla todo lo que hacemos."],
+         incl=["Incidencias del sistema operativo", "Programas que fallan o no se configuran bien", "Ajustes y configuración del equipo"],
+         why_t="", why=[],
+         steps=["Nos llamas al 622 22 97 95 y valoramos si se puede resolver a distancia", "Te guiamos para descargar AnyDesk", "Nos das tu ID de conexión por teléfono para autorizar el acceso", "Trabajamos en tu equipo mientras tú lo ves en pantalla"],
+         note="Tú mantienes el control en todo momento y puedes cortar la conexión cuando quieras. La primera hora se abona por adelantado para iniciar la sesión."),
+    dict(slug="asesoramiento-compra", t="Asesoramiento de compra", d="Configuración equilibrada y compatible, a tu medida. 30 € la hora.", img="ASESORAMIENTO-COMPRA-PC---8.webp", icon="wrench",
+         m="Asesoramiento para comprar un PC por piezas en L'Hospitalet: configuración equilibrada y compatible según tu uso y presupuesto. 30 € la hora.",
          alt="Componentes de PC Gaming (placa base, tarjeta gráfica, refrigeración líquida y caja) en banco de taller",
-         p=["Antes de comprar piezas o un equipo, te ayudamos a elegir componentes compatibles entre sí y ajustados a tu presupuesto y a tus juegos o programas."], steps=["Presupuesto y uso", "Selección de componentes", "Comprobación de compatibilidad", "Opción de montaje en el taller"], extra=""),
-    dict(slug="servicio-de-montaje", t="Servicio de montaje", d="Montaje y pruebas de los componentes de tu PC.", img="Montaje-PC-Gaming---9.webp", icon="wrench",
-         m="Montaje de PC en L'Hospitalet con los componentes que tienes o elijas: cableado, instalación y pruebas antes de la entrega con cita previa.",
+         facts=[("Tarifa", "30 € la hora"), ("Resultado", "Listado de piezas validado"), ("Perfiles", "Ofimática, gaming y creación")],
+         p=["Antes de comprar piezas o un equipo, analizamos para qué lo vas a usar y diseñamos una configuración equilibrada, sin cuellos de botella y con todos los componentes compatibles."],
+         incl=["Análisis de tu perfil: ofimática, gaming a medida o edición y diseño", "Ajuste al presupuesto con orientación realista por gama",
+               "Comprobación de compatibilidad antes de que compres", "Listado de piezas validado técnicamente y listo para adquirir"],
+         why_t="Errores que te ahorras", why=["Fuentes de alimentación insuficientes", "Placas incompatibles con el procesador", "Piezas que no caben en la caja"],
+         steps=[], note="Orientación por gama: entrada, hasta 500 €; media, de 1.000 a 1.500 €; alta y entusiasta, desde 1.500 €. Si lo prefieres, también montamos el equipo en el taller."),
+    dict(slug="servicio-de-montaje", t="Servicio de montaje", d="Montaje, cableado, pruebas de estrés y Windows listo. Desde 70 €.", img="Montaje-PC-Gaming---9.webp", icon="wrench",
+         m="Montaje de PC en L'Hospitalet desde 70 €: auditoría de compatibilidad, cableado, pruebas de estrés, BIOS, Windows y drivers, con cita previa.",
          alt="Técnico montando un procesador en la placa base junto a tarjetas gráficas en el taller",
-         p=["Montamos tu PC con los componentes que ya tienes o con los que elijas, gestionamos los cables y probamos el equipo antes de entregarlo."], steps=["Recepción de componentes", "Montaje y cableado", "Instalación y pruebas", "Entrega con cita previa"], extra=""),
-    dict(slug="convertir-documentos", t="Conversión de documentos", d="Ayuda con archivos que necesitas abrir o cambiar de formato.", img="CONVERTIR-DOCUMENTOS---1.webp", icon="wrench",
+         facts=[("Precio", "Desde 70 €"), ("Pago", "El importe mínimo, por adelantado"), ("Postventa", "Explicación y respaldo técnico")],
+         p=["Si ya tienes los componentes, nos encargamos de ensamblarlos y de entregarte el equipo listo para usar."],
+         incl=["Auditoría de compatibilidad de todas tus piezas", "Cableado ordenado (cable management) para mejor flujo de aire y estética",
+               "Pasta térmica y refrigeración bien aplicadas", "BIOS de la placa actualizada a su última versión",
+               "Pruebas de estrés para certificar la estabilidad",
+               "Instalación limpia de Windows 10 u 11, drivers oficiales y aplicaciones básicas"],
+         why_t="", why=[],
+         steps=[], note="El precio final depende de la complejidad: tamaño de la caja, número de ventiladores, tipo de refrigeración… Te explicamos el software instalado y tienes respaldo técnico para las dudas iniciales."),
+    dict(slug="convertir-documentos", t="Conversión de documentos", d="Cambiamos de formato documentos, fotos, audio y vídeo.", img="CONVERTIR-DOCUMENTOS---1.webp", icon="wrench",
          alt="Gráfico de conversión de documentos (DOC, PDF, XLS, PPT) y fotos (JPG, PNG, GIF, RAW)",
-         p=["Te ayudamos a abrir o convertir documentos y fotos entre formatos habituales (DOC, PDF, XLS, PPT, JPG, PNG…)."], steps=["Nos traes o envías el archivo", "Conversión al formato que necesitas", "Comprobación del resultado"], extra=""),
+         facts=[("Formatos", "DOC, PDF, XLS, PPT, JPG, PNG…"), ("Precio", "Consúltanos")],
+         p=["Te ayudamos a abrir o cambiar de formato los archivos que no te abren o no puedes enviar tal cual: de PDF a Word, de Word a PDF, de imágenes a JPG o PNG, de vídeo a audio…"],
+         incl=["Documentos: PDF, Word (DOC/DOCX), Excel, PowerPoint…", "Imágenes: JPG, PNG, GIF, WEBP, RAW…", "Audio y vídeo: MP3, WAV, MP4, MKV…", "Comprobación del resultado antes de entregarlo"],
+         why_t="", why=[],
+         steps=[], note='¿Prefieres hacerlo tú? Hay herramientas gratuitas en línea como <a href="https://www.zamzar.com/" rel="noopener nofollow">Zamzar</a>, <a href="https://www.ilovepdf.com/es" rel="noopener nofollow">iLovePDF</a> o <a href="https://www.iloveimg.com/es" rel="noopener nofollow">iLoveIMG</a>; si algo no sale, te ayudamos.'),
 ]
 BLOG = [
     dict(slug="cuando-necesita-mantenimiento-tu-pc-gaming", cat="Mantenimiento", t="¿Cuándo necesita mantenimiento tu PC Gaming?", d="Tres señales que puedes observar mientras juegas y qué información llevar al taller.", img="Mantenimiento-PC-Gaming---6.webp",
@@ -146,7 +186,7 @@ BLOG = [
                    ("Qué comprobar primero", "Reasienta la memoria y la gráfica, revisa los cables de alimentación y desconecta lo que no sea imprescindible. Consulta el manual de tu placa para el significado exacto."),
                    ("Cuándo traerlo al taller", "Si el LED sigue encendido tras las comprobaciones básicas, descríbenos qué luz es y qué pasa al arrancar para valorar la causa.")]),
 ]
-NAV = [("index.html", "Inicio"), ("servicios.html", "Servicios"), ("trabajos-realizados.html", "Trabajos realizados"), ("opiniones.html", "Opiniones"), ("pc-gaming.html", "PC Gaming"), ("blog.html", "Blog"), ("contacto.html", "Contacto")]
+NAV = [("index.html", "Inicio"), ("servicios.html", "Servicios"), ("trabajos-realizados.html", "Trabajos realizados"), ("pc-gaming.html", "PC Gaming"), ("blog.html", "Blog"), ("sobre-mi.html", "Sobre mí"), ("contacto.html", "Contacto")]
 # Submenús desplegables (hover/teclado en escritorio, botón en móvil)
 SUB = {
     "servicios.html": [(f"servicio/{s['slug']}.html", s["t"]) for s in SERVICES] + [("servicios.html", "Ver todos los servicios")],
@@ -262,9 +302,59 @@ SPEC_RULES = ('<script type="speculationrules">{"prefetch":[{"where":{"and":[{"h
 
 # Reseñas de Google. Datos a confirmar con Jose antes del lanzamiento (nota/total son los que él indica; la fecha debe ser la de la consulta).
 # escribir = enlace de Google para dejar una reseña (https://search.google.com/local/writereview?placeid=...); sin él, el botón no se muestra.
-RES = dict(nota="4,9", total="casi 300", fecha=None, escribir=None)
+RES = dict(nota="4,9", total="243", fecha="22 de noviembre de 2026", escribir="https://search.google.com/local/writereview?placeid=ChIJLbWfl3GZpBIRsYyi_WBdYDw")
 # Reseñas reales copiadas de la ficha de Google, una por elemento: {"texto": "...", "autor": "María G.", "fecha": "octubre 2026", "url": "https://..."}
-RESENAS = []
+# Copiadas tal cual de la ficha de Google el 22/11/2026. Las 12 primeras van en la fila de arriba del marquee y las 12 siguientes en la de abajo (todas de 5 estrellas; las fechas son el mes aproximado según el "hace X" de Google; nombres acortados).
+RESENAS = [
+    {"texto": "Trato excepcional, trabajo increíble. No solo te ayuda con el software sino que te aconseja y te enseña para el futuro. Si se te estropea el pc o quieres cambiar alguna pieza o renovarlo, este es el lugar al que debes ir.",
+     "autor": "Ben GS", "fecha": "noviembre 2026"},
+    {"texto": "Muy contento con el trabajo realizado. Me montó la PC perfectamente y además me explicó todo con mucha paciencia. Fue muy amable, atento y profesional en todo momento. Se nota que le pone dedicación a su trabajo y que se preocupa por que el cliente quede satisfecho. Sin duda, lo recomiendo y volvería a contar con él.",
+     "autor": "Marco Antonio", "fecha": "octubre 2026"},
+    {"texto": "Fue todo genial, José vio el problema en mi anterior PC y a partir de ahí buscó la mejor solución adaptándose a los componentes que aún se podían reutilizar, un servicio de 10!",
+     "autor": "Marcel N.", "fecha": "octubre 2026"},
+    {"texto": "Perfecto trabajo, me solucionó los problemas de calentamiento que tenía mi portátil, pasé de abrir juegos y que se pusiera en 85-90 grados hasta apagarse a tener el mismo juego a 62 grados y evitar llegar a problemas mayores, muy atento y amable, espero no tener más problemas pero si surge algo ya se a quien acudir",
+     "autor": "Dark Ghoul", "fecha": "octubre 2026"},
+    {"texto": "Lleve mi ordenador porque no encendía correctamente y se calentaba mucho, ahora funciona perfecto, lo ha limpiado y ha cambiado toda la ventilación. Jose es un informático meticuloso y profesional, totalmente recomendado.",
+     "autor": "Jan B.", "fecha": "octubre 2026"},
+    {"texto": "Servicio de 10, José un profesional en lo suyo, agradable, comprensivo y con ganas de hacer la cosas bien.",
+     "autor": "Daniel L.", "fecha": "septiembre 2026"},
+    {"texto": "Tenia el PC hecho polvo literalmente, no me funcionaba bien, tambien lo habia montado mal y Jose me ayudo en todo!!! Muy buen profesional, excelente trabajo. Recomiendo encarecidamente que si teneis algun problema con vuestro PC, contacteis con el. Ademas, precios muy competitivos. Y asi quedo mi nuevo PC",
+     "autor": "Daniel", "fecha": "agosto 2026"},
+    {"texto": "Se me estropeó la refrigeración líquida en pleno agosto y encontré este sitio aquí. He quedado muy satisfecho con los servicios de Jose ya que, además de montarme una nueva refrigeración, le hizo a mi PC una puesta a punto profunda muy necesaria tanto de hardware como de software dejando el ordenador como nuevo. Además me explicó todos los procesos, me hizo muchas recomendaciones y me mantuvo informado todo el tiempo. Muy grande! Muchas gracias, Jose!",
+     "autor": "Joan A.", "fecha": "agosto 2026"},
+    {"texto": "El técnico de 'venta reparación pc', es un informático sagaz y experimentado; no tardó nada en detectar un problema complejo de un ordenador bastante maltratado y lo dejó como nuevo intentando ajustar el precio al máximo. Gracias Jose!",
+     "autor": "Señor V", "fecha": "agosto 2026"},
+    {"texto": "Lleve mi torre para un servicio de limpieza y mantenimiento, asi como realizar un cambio de refrigeración por aire a líquido, terminando con un servicio muy satisfactorio y recomendable. Estuve informado durante todo el proceso de todo lo que se iba realizando, con buenas explicaciones y fotos. El resultado fue una torre mucho mas optimizada y fluida que incluso estando nueva, tanto a nivel software como hardware. Sin duda, es un servicio 100% recomendado y que voy a repetir con mi ordenador portátil. Vuestros PC están bien cuidados en estas manos y pongo la mano en el fuego, que si necesitais de mantenimiento o asesoramiento, este es el mejor lugar al que he acudido.",
+     "autor": "Francisco D.", "fecha": "julio 2026"},
+    {"texto": "Excelente servicio y rapidez. Llevé mi ordenador a reparar y en solo dos días ya lo tenía de vuelta como nuevo. El trato ha sido impecable y el trabajo de diez. Estoy muy contento con el resultado. Sin duda lo recomiendo al 100% si buscas a alguien profesional, de confianza y eficaz. ¡Muchas gracias!",
+     "autor": "Pauete2004", "fecha": "julio 2026"},
+    {"texto": "Le lleve mi ordenador a José para que le hiciera un chequeo ya que al jugar a videojuegos tenía bajadas de FPS. Rápidamente vio lo que le pasaba, hacia ruido la refrigeración líquida, el ordenador estaba bastante sucio por dentro y los thermales estaban pasados. Me puso el ordenador a punto, y ahora mismo va genial. 100% recomendable.",
+     "autor": "Aimar A.", "fecha": "abril 2026"},
+    {"texto": "Servicio express(1 día desde el primer contacto hasta que el portátil fue arreglado). Conocimiento real aplicado a cualquier tecnología, en mi caso, portátil gaming. Recomendado al máximo.",
+     "autor": "Giovanni G.", "fecha": "agosto 2026"},
+    {"texto": "El ordenador de mi hijo no funcionaba bien,vimos reseñas de José y le llamamos ,nos atendió de maravilla ,nos dió cita enseguida ,revisó minuciosamente el ordenador y nos explicó a mi ,a mí marido y a mi hijo ,paso por paso todo el proceso ,instalo Windows, me soluciono el tema de un virus que tenía el pc y me volvió a colocar la refrigeración líquida, que por cierto mi anterior técnico me montó mal ,en resumen lo puso a punto ,es un técnico que recomiendo100x100,Gracias Jose volveremos sin duda .",
+     "autor": "Luis R.", "fecha": "septiembre 2026"},
+    {"texto": "Fui a VRPC porque no me encendía el ordenador y me daba un error antes de llegar al escritorio, pensaba que el ordenador estaba para tirar, pero entonces, Jose, se puso manos a la obra y en cuestión de 24h ya tenía el ordenador como cuando lo compré. Me realizó un formateo + puesta a punto de actualizaciónes, tanto de windows como de la Bios, me hizo una limpieza exhausta desmontando el ordenador pieza por pieza y buscando en los recobecos mas escondidos para quitar el polvo. Sin duda un trabajo de 10. Si tengo alguna vez otro problema con el ordenador, volveré con VRPC Adjunto fotos del antes y el después",
+     "autor": "Green Potion", "fecha": "junio 2026"},
+    {"texto": "Lleve mi ordenador con José porque había dejado de funcionar de la nada, me dio un trato bastante profesional y cercano, me configuró los drivers la bios e incluso hizo pruebas para revisar que funcionara perfecto bajo presión. Un trato impecable",
+     "autor": "Santiago", "fecha": "junio 2026"},
+    {"texto": "He llevado ya dos veces los portátiles de mis hijos y la experiencia ha sido muy buena. Te atiende enseguida y soluciona los problemas. Además, el señor es muy agradable y atento. Totalmente recomendable.",
+     "autor": "Ana Belén N.", "fecha": "mayo 2026"},
+    {"texto": "Tenia un problema con el ordenador se me apagó de la nada, el señor me explico que la placa base se había quemado la cambio todo muy bien, jose muy amable explica todo paso a paso si tengo alguna problema con mi pc acudiré a el 👍 👍👍…",
+     "autor": "Aldahir T.", "fecha": "mayo 2026"},
+    {"texto": "Simplemente. excelente, el Sr. José es como ese amigo friki de la informática que todo el mundo quiere tener cerca y quiere lo mejor para tí jajajaja Le llevé el pc el sábado al mediodia, estuvo en todo momento enseñándome que hacia y que necesitaba mi ordenador. Luego durante ese dia y el domingo me estuvo informándome de prácticamente todo, enviandóme fotos y vídeos. A parte le hizo limpieza del pc que creo no haberlo visto en mi vida así, excepto cuando lo estrené. A quedado de fábula, super recomendable.",
+     "autor": "Carlos R.", "fecha": "mayo 2026"},
+    {"texto": "Muy contenta, José es amable y profesional. Fui por un problema con mi laptop donde se apagaba la pantalla a cada rato y lo solucionó en menos de 24h, e incluso me hizo retoques para que esté optimizado y tampoco ocupe tanto almacenamiento. Ahora va bien y rápido. En todo momento me mantuvo informada, tanto de los procedimientos como de los precios que iban a costar dichos servicios y pidiendo la autorización para ello, por lo que fue bastante transparente. Además, explicaba a detalle todo lo que no entendía o no sabía de antemano.",
+     "autor": "Xiny", "fecha": "abril 2026"},
+    {"texto": "Excelente servicio. Jose fue muy profesional desde el primer momento. Me explicó claramente cuál era el problema del ordenador y estuvo muy comunicativo durante todo el proceso, informándome de cada paso y resolviendo dudas con paciencia. Además, la reparación fue rápida, algo que valoro todavía más teniendo en cuenta que fue en pleno periodo navideño, cuando todo suele retrasarse. Se nota que sabe lo que hace y que le importa ofrecer un buen servicio. Totalmente recomendable. Sin duda volveré a contar con él si lo necesito.",
+     "autor": "Jose S.", "fecha": "febrero 2026"},
+    {"texto": "Que decir de José, su trato fue muy profesional y amable, mi PC tenia un problema principal y muchos otros tratos secundarios, y José pudo resolverlos absolutamente todos en un tiempo prácticamente record. El precio bastante asequible para todos los problemas que me ha resuelto dentro de mi PC. Además de ser muy majo con sus clientes, definitivamente se ha ganado un cliente de confianza más.",
+     "autor": "Jericho", "fecha": "noviembre 2025"},
+    {"texto": "Mi ordenador fallaba al arrancar ya que estuve tocando la configuración de la BIOS e hice algo mal. Directamente pantalla negra y no cargaba nada, ni siquiera podía volver a acceder a la BIOS. Se lo llevé a Jose y me lo arregló. Era Domingo y me atendió en seguida. Era un arreglo complicado, con alguna soldadura en la placa base. Recomendado al 100%. Buen trabajo!!",
+     "autor": "Hodei A.", "fecha": "noviembre 2025"},
+    {"texto": "Le pedimos un ordenador para jugar al niño sin tener ninguna idea de lo que buscabamos y empezó a hacer mil configuraciones hasta que encontró la que realmente nos hizo falta.Ademas busco enlaces para un televisor que también nos haría falta para completar la experiencia. Muy rápido en montar el ordenador y explicando todo lo que tenía.Ademas puedes llamar en cualquier momento y ahí esta para atenderte. Muy recomendable",
+     "autor": "Alberto P.", "fecha": "noviembre 2025"},
+]
 
 def reviews_block():
     stars = ic("star") * 5
@@ -283,6 +373,9 @@ def reviews_block():
     else:
         ph = '<figure class="card rv-card ph"><div class="rv-stars" aria-hidden="true">' + stars + '</div><blockquote><p><mark class="pend">[PENDIENTE: texto de una reseña real de Google]</mark></p></blockquote><figcaption><mark class="pend">[Nombre · mes y año]</mark></figcaption></figure>'
         cards = ph * 3
+    # Con reseñas reales: cuadrícula estática (sin JS o con movimiento reducido) que main.js convierte en dos filas en movimiento (marquee).
+    if RESENAS:
+        return head + f'<div class="rv-marquee" data-marquee><div class="rv-grid">{cards}</div></div>'
     return head + f'<div class="rv-grid">{cards}</div>'
 
 # Barra flotante inferior (solo móvil, ≤960px; mismo patrón que la landing de verstats): flecha ↑ al inicio, Llamar y Pedir cita. Lógica en assets/js/main.js.
@@ -325,7 +418,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
     cta = f"""<section class="cta"><div class="wrap cta-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
 <div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot = f"""<footer class="foot"><div class="wrap foot-in"><div><strong>VENTAREPARACIONPC</strong><br><span>L'Hospitalet de Llobregat · {TEL}</span></div>
-<nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
+<nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
     body_cls = ' class="solo"' if solo else ""
     return f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{base_head}
@@ -347,6 +440,25 @@ def head_band(crumbs, h1, sub=""):
              for i, (h, t) in enumerate(crumbs)]
     bc = ld({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items})
     return f'<section class="band"><div class="wrap"><nav class="crumbs" aria-label="Migas">{c}</nav><h1>{h1}</h1>{f"<p>{sub}</p>" if sub else ""}</div>{bc}</section>'
+
+def service_article(s):
+    """Contenido de la página de un servicio: datos clave, qué incluye, por qué, cómo funciona y nota."""
+    def ul(items):
+        return '<ul class="list">' + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
+    facts = ""
+    if s.get("facts"):
+        facts = '<dl class="facts">' + "".join(f"<div><dt>{k}</dt><dd>{v}</dd></div>" for k, v in s["facts"]) + "</dl>"
+    h = "".join(f"<p>{x}</p>" for x in s["p"])
+    if s.get("incl"):
+        h += "<h2>Qué incluye</h2>" + ul(s["incl"])
+    if s.get("why"):
+        h += f'<h2>{s["why_t"]}</h2>' + ul(s["why"])
+    if s.get("steps"):
+        h += '<h2>Cómo funciona</h2><ol class="stepsl">' + "".join(f"<li>{x}</li>" for x in s["steps"]) + "</ol>"
+    if s.get("note"):
+        h += f'<p class="note">{s["note"]}</p>'
+    return (f'<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s["img"])}" alt="{E(s["alt"])}" fetchpriority="high"{img_dims(s["img"])}>'
+            f'{facts}{h}</article>\n')
 
 def svc_card(s, p="", h="h3"):
     # h="h2" cuando la tarjeta cuelga directamente del h1 (la clase h3 conserva su tamaño visual)
@@ -385,7 +497,7 @@ def build():
 <h1>Expertos en <em>Reparación y Montaje</em> de Ordenadores</h1>
 <p class="hg-sum">En VentaReparacionPC cuidamos de tu equipo como si fuera nuestro.</p></div>
 <div class="hg-proc"><p class="hg-eb">Así trabajamos</p><h2>Servicio técnico transparente</h2><p class="hg-ps">Un proceso claro y sencillo para que siempre sepas qué le ocurre a tu equipo y qué soluciones tiene.</p>
-<ol class="hg-st"><li><span class="n">1</span><span class="ico">{ic("pc")}</span><b>Traes tu equipo</b><span class="d">Nos cuentas el problema y revisamos tu PC Gaming.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">2</span><span class="ico">{ic("search")}</span><b>Revisión delante de ti</b><span class="d">Analizamos el hardware delante del cliente.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">3</span><span class="ico">{ic("chat")}</span><b>Explicación clara</b><span class="d">Te mostramos el origen del problema y las posibles soluciones.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">4</span><span class="ico">{ic("doc")}</span><b>Presupuesto al momento</b><span class="d">Te damos el precio en el acto, sin compromiso.</span></li></ol></div>
+<ol class="hg-st"><li><span class="n">1</span><span class="ico">{ic("pc")}</span><b>Traes tu equipo</b><span class="d">Nos cuentas el problema y revisamos tu PC Gaming.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">2</span><span class="ico">{ic("search")}</span><b>Revisión delante de ti</b><span class="d">Analizamos el hardware delante del cliente.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">3</span><span class="ico">{ic("chat")}</span><b>Explicación clara</b><span class="d">Te mostramos el origen del problema y las posibles soluciones.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">4</span><span class="ico">{ic("doc")}</span><b>Presupuesto sin compromiso</b><span class="d">Te damos el precio tras revisar tu equipo.</span></li></ol></div>
 <div class="hg-bot"><p class="hg-small">Nos especializamos en la reparación de ordenadores de sobremesa de todas las marcas, resolviendo problemas de lentitud, fallos de arranque o de placa base. Además, somos apasionados del hardware. Diseñamos tu PC Gaming personalizado pieza a pieza, optimizando cada euro de tu presupuesto para ofrecerte el máximo rendimiento en tus juegos favoritos. Todo ello con componentes de primeras marcas y total garantía.</p>
 <div class="hg-cta"><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div>
 </div>
@@ -402,8 +514,7 @@ def build():
         f'<section class="wrap sec"><div class="g2 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
-        li = "".join(f"<li>{x}</li>" for x in s["steps"])
-        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(s['img'])}" alt="{E(s['alt'])}" fetchpriority="high"{img_dims(s['img'])}>{"".join(f"<p>{x}</p>" for x in s['p'])}<h2>Qué incluye</h2><ul class="list">{li}</ul>{f'<p><strong>{s["extra"]}</strong></p>' if s['extra'] else ''}</article>
+        body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + service_article(s) + f"""
 <aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "Service", "name": s["t"], "serviceType": s["t"], "description": s["d"], "url": "%%URL%%",
                 "provider": {"@id": SITE + "/#negocio"}, "areaServed": {"@type": "City", "name": CIUDAD}})
@@ -415,7 +526,7 @@ def build():
 <figure class="card"><img src="assets/img/despues.jpg" alt="Interior del PC limpio" loading="lazy" data-zoom{img_dims("despues.jpg")}><figcaption>{ic("check","g")}Después del mantenimiento{ic("zoom","z")}</figcaption></figure></div>
 <p class="muted">Las fotos muestran el interior del equipo antes y después de retirar el polvo acumulado. Pulsa en cualquiera para ampliarla.</p></div>
 <aside><div class="card side"><h3>Pide cita para tu equipo</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
-<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento PC Gaming {ic("arrow")}</a></div></aside></section>"""
+<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>"""
     write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Ejemplos de trabajos realizados en el taller: antes y después de una limpieza interna de PC Gaming.", body, "trabajos-realizados.html"))
 
     # ---- Opiniones
@@ -424,8 +535,20 @@ def build():
 <aside class="card side"><h2 class="h3">Conoce el taller</h2><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a><a class="more row" href="ubicacion.html">Ubicación {ic("arrow")}</a><a class="more row" href="contacto.html">Contacto {ic("arrow")}</a></aside></section>"""
     write("opiniones.html", page("", "Opiniones de clientes | VRPC", "Opiniones de clientes de VENTAREPARACIONPC en Google.", body, "opiniones.html"))
 
+    # ---- Sobre mí (solo hechos comprobados; lo que falta va marcado como PENDIENTE hasta confirmarlo con Jose)
+    body = head_band([("index.html", "Inicio"), (None, "Sobre mí")], "Sobre mí", "Quién está detrás de VRPC y cómo trabaja.") + f"""<section class="wrap sec two"><article class="card prose"><h2>José, técnico informático en L'Hospitalet</h2>
+<p>VRPC es el taller de José en L'Hospitalet de Llobregat: reparación y mantenimiento de ordenadores, montaje de PC Gaming a medida, actualizaciones y asesoramiento de compra. Se atiende con cita previa.</p>
+<p><mark class="pend">[PENDIENTE: trayectoria de Jose (años de experiencia, formación, cómo empezó) y foto — a confirmar con él]</mark></p>
+<h2>Cómo trabaja</h2>
+<ul class="list"><li>Explica cada paso: qué le pasa al equipo, qué hace falta y cuánto cuesta, y pide autorización antes de seguir.</li>
+<li>Mantiene informado al cliente durante la reparación, con fotos y mensajes.</li>
+<li>Plazos cortos: muchas reparaciones se entregan en uno o dos días.</li></ul>
+<p class="muted">Resumen de lo que más repiten los clientes en sus <a href="opiniones.html">reseñas de Google</a> ({E(RES['nota'])} sobre 5, {E(RES['total'])} opiniones a fecha de {E(RES['fecha'])}).</p></article>
+<aside class="card side"><h2 class="h3">Habla con José</h2><p>Cuéntale qué le pasa a tu equipo y te orienta antes de traerlo.</p><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a><a class="more row" href="opiniones.html">Ver opiniones de clientes {ic("arrow")}</a><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a></aside></section>"""
+    write("sobre-mi.html", page("", "Sobre mí | VRPC", "Conoce a José, el técnico informático de VRPC en L'Hospitalet de Llobregat, y cómo trabaja.", body, "sobre-mi.html", extra_head=negocio_ld()))
+
     # ---- PC Gaming
-    cards = "".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
+    cards ="".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
     body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button type="button" class="chip on" data-f="all">Todos</button><button type="button" class="chip" data-f="AMD">AMD Ryzen</button><button type="button" class="chip" data-f="Intel">Intel</button></div>
 <div class="searchrow"><label for="q">Buscar</label><div><input id="q" type="search" placeholder="Por ejemplo, Ryzen 7 o RTX 5070"><span id="count" aria-live="polite">{len(pcs)} resultados</span></div></div>
 <div class="g4" id="grid">{cards}</div></section>"""

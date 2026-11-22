@@ -107,3 +107,54 @@
   window.addEventListener('scroll', f, { passive: true });
   f();
 })();
+
+// Reseñas: la cuadrícula estática se convierte en dos filas en movimiento (la 2.ª, en sentido contrario y con reseñas distintas a la 1.ª).
+// Si el sistema pide menos movimiento, se deja la cuadrícula y un botón permite verlas en movimiento; si no, arrancan solas y el botón las pausa.
+// El HTML conserva cada reseña una sola vez; las únicas copias que se crean aquí son las del bucle de cada fila, con aria-hidden.
+(function () {
+  var m = document.querySelector('[data-marquee]');
+  if (!m) return;
+  var grid = m.querySelector('.rv-grid');
+  var cards = grid ? [].slice.call(grid.children) : [];
+  if (cards.length < 3) return;
+  var reducido = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var el = function (c, a) { var d = document.createElement('div'); d.className = c; if (a) for (var k in a) d.setAttribute(k, a[k]); return d; };
+  var fila = function (lista, rev, dur, ocultaTodo) {
+    var r = el('rv-row' + (rev ? ' rv-rev' : '')), t = el('rv-track');
+    t.style.setProperty('--d', dur);
+    for (var i = 0; i < 2; i++) {
+      var s = el('rv-set', (i || ocultaTodo) ? { 'aria-hidden': 'true' } : null);
+      lista.forEach(function (c) { s.appendChild(c.cloneNode(true)); });
+      t.appendChild(s);
+    }
+    r.appendChild(t); return r;
+  };
+  // Cada fila lleva reseñas distintas: la mitad de arriba y la mitad de abajo (nunca se repite una entre filas).
+  var n = Math.ceil(cards.length / 2), arriba = cards.slice(0, n), abajo = cards.slice(n);
+  var vivo = false;
+  var montar = function () {
+    m.classList.add('is-live'); m.classList.remove('rv-paused'); vivo = true;
+    m.replaceChildren(fila(arriba, false, arriba.length * 11 + 's', false), fila(abajo, true, abajo.length * 11 + 's', false));
+    window.dispatchEvent(new Event('rv-montado'));
+  };
+  var btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'btn ghost rv-ctl';
+  var texto = function () { btn.textContent = !vivo ? 'Ver en movimiento' : (m.classList.contains('rv-paused') ? 'Reanudar movimiento' : 'Pausar movimiento'); };
+  btn.addEventListener('click', function () {
+    if (!vivo) { m.classList.add('rv-force'); montar(); } else m.classList.toggle('rv-paused');
+    texto();
+  });
+  m.parentNode.insertBefore(btn, m.nextSibling);
+  if (!reducido) montar();
+  texto();
+})();
+
+// Reseñas: las tarjetas tienen altura limitada; si el texto no cabe, se difumina por abajo (clase is-cut). El texto completo sigue en el HTML.
+(function () {
+  if (!document.querySelector('.rv-card')) return;
+  var f = function () { [].forEach.call(document.querySelectorAll('.rv-card blockquote'), function (e) { e.classList.toggle('is-cut', e.scrollHeight > e.clientHeight + 1); }); };
+  f();
+  window.addEventListener('load', f);
+  window.addEventListener('resize', f);
+  window.addEventListener('rv-montado', f);
+})();
