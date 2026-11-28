@@ -63,7 +63,12 @@
       lista.forEach(function (x) { grid.appendChild(x); });
       run();   // el contador (aria-live) anuncia también el orden
     });
-    if (orden && orden.value) orden.dispatchEvent(new Event('change'));   // el navegador puede recordar el valor al recargar
+    var sortrow = document.getElementById('sortrow');
+    if (sortrow) sortrow.hidden = false;   // sin JS el selector no haría nada: solo se muestra si funciona
+    // El navegador puede recordar la búsqueda y el orden al recargar: se aplican para que lista y contador cuadren.
+    var qi = document.getElementById('q');
+    if (qi && qi.value) { q = qi.value.trim().toLowerCase(); run(); }
+    if (orden && orden.value) orden.dispatchEvent(new Event('change'));
     var porHash = function () {
       var m = { todos: 'all', amd: 'AMD', intel: 'Intel' }, v = m[location.hash.slice(1).toLowerCase()];
       if (!v) return;
