@@ -937,3 +937,13 @@
 /* unslop: sin manchas de color ni destello animado */
 .s2-left::before,.s2-left::after{display:none!important}
 .rt-cta .btn:not(.ghost)::after{display:none!important}
+
+/* Preguntas frecuentes de portada (entre #opiniones y la banda de cita): título a la izquierda y lista a la derecha en escritorio */
+.faq-h{padding:8px 0 64px}
+.faq-h-in{display:grid;gap:18px}
+.faq-h h2{font-size:clamp(26px,3vw,36px);margin:0 0 10px;color:var(--navy)}
+.faq-h .faq-l{max-width:none}
+.faq-more{margin:0;font-size:14.5px;color:var(--mut)}
+.faq-more a{text-decoration:underline;text-underline-offset:2px}
+@media(min-width:961px){.faq-h-in{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:clamp(28px,4vw,80px);align-items:start}}
+@media(max-width:960px){.faq-h{padding:0 0 44px}}

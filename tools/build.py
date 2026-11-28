@@ -377,22 +377,49 @@ RESENAS = [
 ]
 
 # Preguntas frecuentes: SOLO respuestas que ya afirma la web (fuente al lado). Coste de la revisión, garantía,
-# portátiles y medios de pago quedan fuera hasta que Jose los confirme.
+# portátiles, medios de pago y horario quedan fuera hasta que Jose los confirme.
+# Las tarifas se leen de SERVICES (un solo sitio que cambiar). "@P@" se sustituye por el prefijo de la página ("" o "../").
+def _tarifa(slug, clave):
+    v = dict(next(s for s in SERVICES if s["slug"] == slug)["facts"])[clave]
+    return (v[0].lower() + v[1:]).replace(" €", " €")   # el € no se separa de la cifra
+
 FAQ = {
+    "coste": ("¿Cuánto cuesta?",   # SERVICES: reparación (presupuesto tras revisión), mantenimiento, montaje, BIOS, asistencia remota
+              'Depende del trabajo. La <a href="@P@servicio/reparacion-pc.html">reparación</a> se presupuesta tras revisar el equipo, sin compromiso. '
+              f'El mantenimiento cuesta {_tarifa("mantenimiento-pc-gaming", "Precio")}; el montaje con tus piezas, {_tarifa("servicio-de-montaje", "Precio")}; '
+              f'la actualización de BIOS, {_tarifa("actualizacion-bios", "Precio")}, y la asistencia remota, {_tarifa("asistencia-remota", "Precio")}. '
+              'Consulta <a href="@P@servicios.html">todos los servicios</a>.'),
+    "precio_antes": ("¿Sabré el precio antes de que empecéis a reparar?",   # hero pasos 2-4 + SERVICES reparación
+                     "Sí. Revisamos el equipo delante de ti, te explicamos qué le ocurre y qué soluciones tiene, "
+                     "y te damos el presupuesto, sin compromiso, antes de empezar."),
+    "plazo": ("¿Cuánto tarda una reparación?",   # sobre-mi (uno o dos días) + SERVICES mantenimiento (desde 24 h, orientativo)
+              "Muchas reparaciones se entregan en uno o dos días, y el mantenimiento tiene un plazo aproximado desde 24 horas. "
+              "Son plazos orientativos: dependen del estado del equipo y de la carga de trabajo del taller."),
+    "cita": ("¿Tengo que pedir cita?",   # SERVICES (Atendemos con cita previa) + contacto (modelo y descripción de la avería)
+             f'Sí, atendemos con cita previa en L\'Hospitalet. Pídela por <a href="{WA_CITA}">WhatsApp</a> o llamando al <a href="{TEL_LINK}">{TEL}</a>, '
+             "y ten a mano el modelo del equipo y una descripción de la avería."),
+    "remota": ("¿Podéis ayudarme sin llevar el equipo al taller?",   # SERVICES asistencia-remota
+               "Si es un problema de software y el equipo enciende y tiene conexión a Internet, sí: por "
+               f'<a href="@P@servicio/asistencia-remota.html">asistencia remota</a>, a {_tarifa("asistencia-remota", "Precio")}. '
+               "Llámanos y valoramos si se puede resolver a distancia."),
     "datos": ("¿Hace falta volcar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
-              'No: el <a href="servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
+              'No: el <a href="@P@servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
     "piezas": ("¿Puedo llevar mis propias piezas para que me montéis el PC?",   # SERVICES servicio-de-montaje
                'Sí. Si ya tienes los componentes, comprobamos que sean compatibles, los montamos y te entregamos el equipo listo para usar. '
-               'El <a href="servicio/servicio-de-montaje.html">servicio de montaje</a> cuesta desde 70 € y el importe mínimo se abona por adelantado.'),
-    "plazo": ("¿Cuánto tarda?",   # SERVICES mantenimiento (desde 24 h, orientativo) + sobre-mi (uno o dos días)
-              "El mantenimiento tiene un plazo aproximado desde 24 horas y muchas reparaciones se entregan en uno o dos días. "
-              "Son plazos orientativos: dependen del estado del equipo y de la carga de trabajo del taller."),
+               f'El <a href="@P@servicio/servicio-de-montaje.html">servicio de montaje</a> cuesta {_tarifa("servicio-de-montaje", "Precio")} y el importe mínimo se abona por adelantado.'),
     "pago": ("¿Hay que pagar algo por adelantado?",   # SERVICES montaje y asistencia remota
              "En el servicio de montaje se abona por adelantado el importe mínimo, y en la asistencia remota, la primera hora."),
 }
 
-def faq_block(keys):
-    items = "".join(f"<details><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1]}</p></details>" for k in keys)
+def faq_block(keys, p="", home=False):
+    """Lista de <details>. home=True: variante de portada (antetítulo, título a la izquierda y salida a WhatsApp para otras dudas)."""
+    items = "".join(f"<details><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1].replace('@P@', p)}</p></details>" for k in keys)
+    if home:
+        duda = wa("Hola, tengo una duda antes de pedir cita: ")
+        return ('\n<section class="faq-h" id="preguntas" aria-labelledby="faq-title"><div class="wrap faq-h-in"><div class="faq-h-head">'
+                '<p class="kicker">Preguntas frecuentes</p><h2 id="faq-title">Antes de traer tu equipo</h2>'
+                f'<p class="faq-more">¿Tienes otra duda? <a href="{duda}">Pregúntanos por WhatsApp</a></p></div>'
+                f'<div class="faq-l">{items}</div></div></section>\n')
     return f'<section class="wrap sec faq"><h2>Preguntas frecuentes</h2><div class="faq-l">{items}</div></section>'
 
 # Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
@@ -644,13 +671,13 @@ def build():
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home()
+""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "cita"], home=True)
     body = responsive_imgs(body)
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Reparación, mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
-        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["plazo", "datos", "piezas", "pago"])
+        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["precio_antes", "plazo", "remota", "datos", "piezas", "pago"])
     body = responsive_imgs(body, sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 960px) 45vw, 30vw", eager=3)
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de reparación, mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
@@ -725,7 +752,7 @@ def build():
     # ---- Contacto / ubicación / legales
     body = head_band([("index.html", "Inicio"), (None, "Contacto")], "Contacto", "Contacta con VRPC para concertar una cita antes de traer tu ordenador.") + f"""<section class="wrap sec"><div class="g2"><div class="card box"><h2>Pide cita</h2><p>Ten a mano el modelo del equipo y una descripción de la avería o de la mejora que quieres hacer.</p><div class="btns"><a class="btn" href="{wa(chr(10).join(["Hola, quiero pedir cita.", "Equipo (modelo): ", "Qué le pasa o qué quiero mejorar: "]))}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}{TEL}</a></div></div>
 <div class="card box"><h2>Cómo llegar</h2><p>{DIR}<br>Atención con cita previa.</p><a class="btn ghost" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div>
-<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>""" + faq_block(["plazo", "pago", "datos"])
+<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>""" + faq_block(["precio_antes", "plazo", "remota", "pago"])
     write("contacto.html", page("", "Contacto | VRPC", "Contacto y cita previa en VENTAREPARACIONPC, L'Hospitalet de Llobregat.", body, "contacto.html", extra_head=negocio_ld()))
     body = head_band([("index.html", "Inicio"), (None, "Ubicación")], "Ubicación") + f'<section class="wrap sec"><div class="card box"><p>{DIR}</p><p>Atención con cita previa. Teléfono: <a href="{TEL_LINK}">{TEL}</a></p><a class="btn" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div></section>'
     write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde está VentaReparacionPC: Carrer de les Aigües del Llobregat, 115, interior, 08906 L'Hospitalet de Llobregat. Atención con cita previa.", body, extra_head=negocio_ld()))
