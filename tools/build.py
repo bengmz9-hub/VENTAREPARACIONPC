@@ -103,6 +103,21 @@ def load_pcs():
 
 # ------------------------------------------------------------------ contenido
 SERVICES = [
+    # Textos tomados de lo ya publicado (proceso del hero, Pantalla 2 y contacto). Sin portátiles hasta que Jose confirme el alcance.
+    dict(slug="reparacion-pc", t="Reparación de PC", d="Fallos de arranque, bloqueos, pantallazos y sobrecalentamiento. Revisión delante de ti y presupuesto sin compromiso.", img="despues.webp", main=True, icon="wrench",
+         m="Reparación de ordenadores en L'Hospitalet: revisamos tu equipo delante de ti, localizamos la avería y te damos presupuesto sin compromiso.",
+         alt="Interior de un PC Gaming después de una intervención en el taller",
+         facts=[("Revisión", "Delante de ti, en el taller"), ("Presupuesto", "Sin compromiso, antes de empezar"), ("Atención", "Con cita previa")],
+         p=["Si tu ordenador no arranca, se bloquea, muestra pantallazos o se calienta más de la cuenta, lo revisamos delante de ti para localizar el origen del fallo. Te explicamos qué le ocurre y qué soluciones tiene, y te damos el precio antes de tocar nada."],
+         incl=["Diagnóstico de fallos de arranque, de placa base y de componentes",
+               "Sustitución de componentes dañados",
+               "Resolución de problemas de inicio, pantallazos y errores críticos del sistema",
+               "Instalación limpia de Windows",
+               "Eliminación de virus y malware",
+               "Revisión de la refrigeración para evitar sobrecalentamientos"],
+         why_t="", why=[],
+         steps=["Traes tu equipo y nos cuentas qué le pasa", "Lo revisamos delante de ti", "Te explicamos el origen del problema y las posibles soluciones", "Te damos el presupuesto sin compromiso antes de empezar"],
+         note="Atendemos con cita previa en L'Hospitalet. Al pedir cita, ten a mano el modelo del equipo y una descripción de la avería."),
     dict(slug="mantenimiento-pc-gaming", t="Mantenimiento", d="Limpieza interna, pasta térmica y puesta a punto del sistema. Desde 70 € y plazo aproximado desde 24 h.", img="Mantenimiento-PC-Gaming---6.webp", main=True, icon="fan",
          m="Mantenimiento de ordenadores en L'Hospitalet: limpieza interna, pasta térmica nueva, optimización de Windows y drivers. Desde 70 € y con un plazo aproximado desde 24 horas, sin volcar tus datos.",
          alt="Técnico aplicando pasta térmica al procesador durante el mantenimiento de un PC Gaming",
@@ -591,10 +606,10 @@ def build():
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
-    body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
-        f'<section class="wrap sec"><div class="g2 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
-    body = responsive_imgs(body, sizes="(max-width: 960px) calc(100vw - 42px), 45vw", eager=2)
-    write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
+    body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Reparación, mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
+        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
+    body = responsive_imgs(body, sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 960px) 45vw, 30vw", eager=3)
+    write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de reparación, mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
         body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + service_article(s) + f"""
 <aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{wa(f"Hola, me interesa el servicio «{s['t']}» y quiero pedir cita.")}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
