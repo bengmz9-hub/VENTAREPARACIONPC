@@ -5,7 +5,7 @@ Lee las fichas de PC desde varios/sitio (solo local) la primera vez y deja
 los datos en data/pcs.json; después ya no hace falta 'varios/'."""
 import html, json, re, shutil, struct, sys
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import legal   # textos legales (tools/legal.py)
 
@@ -15,6 +15,10 @@ IMG = ROOT / "assets" / "img"
 TEL = "622 22 97 95"
 TEL_LINK = "tel:+34622229795"
 WA = "https://wa.me/34622229795"
+def wa(texto):
+    """Enlace de WhatsApp con el mensaje ya escrito: el cliente solo pulsa enviar y Jose sabe desde dónde le escriben."""
+    return f"{WA}?text={quote(texto, safe='')}"
+WA_CITA = wa("Hola, quiero pedir cita en el taller.")
 MAIL = "info@ventareparacionpc.es"
 DIR = "Carrer de les Aigües del Llobregat, 115, interior<br>08906 L'Hospitalet de Llobregat, Barcelona"
 MAPS = "https://www.google.com/maps/search/?api=1&query=Carrer+de+les+Aig%C3%BCes+del+Llobregat+115+L%27Hospitalet+de+Llobregat"
@@ -99,6 +103,21 @@ def load_pcs():
 
 # ------------------------------------------------------------------ contenido
 SERVICES = [
+    # Textos tomados de lo ya publicado (proceso del hero, Pantalla 2 y contacto). Sin portátiles hasta que Jose confirme el alcance.
+    dict(slug="reparacion-pc", t="Reparación de PC", d="Fallos de arranque, bloqueos, pantallazos y sobrecalentamiento. Revisión delante de ti y presupuesto sin compromiso.", img="despues.webp", main=True, icon="wrench",
+         m="Reparación de ordenadores en L'Hospitalet: revisamos tu equipo delante de ti, localizamos la avería y te damos presupuesto sin compromiso.",
+         alt="Interior de un PC Gaming después de una intervención en el taller",
+         facts=[("Revisión", "Delante de ti, en el taller"), ("Presupuesto", "Sin compromiso, antes de empezar"), ("Atención", "Con cita previa")],
+         p=["Si tu ordenador no arranca, se bloquea, muestra pantallazos o se calienta más de la cuenta, lo revisamos delante de ti para localizar el origen del fallo. Te explicamos qué le ocurre y qué soluciones tiene, y te damos el precio antes de empezar la reparación."],
+         incl=["Diagnóstico de fallos de arranque, de placa base y de componentes",
+               "Sustitución de componentes dañados",
+               "Resolución de problemas de inicio, pantallazos y errores críticos del sistema",
+               "Instalación limpia de Windows",
+               "Eliminación de virus y malware",
+               "Revisión de la refrigeración para evitar sobrecalentamientos"],
+         why_t="", why=[],
+         steps=["Traes tu equipo y nos cuentas qué le pasa", "Lo revisamos delante de ti", "Te explicamos el origen del problema y las posibles soluciones", "Te damos el presupuesto sin compromiso antes de empezar"],
+         note="Atendemos con cita previa en L'Hospitalet. Al pedir cita, ten a mano el modelo del equipo y una descripción de la avería."),
     dict(slug="mantenimiento-pc-gaming", t="Mantenimiento", d="Limpieza interna, pasta térmica y puesta a punto del sistema. Desde 70 € y plazo aproximado desde 24 h.", img="Mantenimiento-PC-Gaming---6.webp", main=True, icon="fan",
          m="Mantenimiento de ordenadores en L'Hospitalet: limpieza interna, pasta térmica nueva, optimización de Windows y drivers. Desde 70 € y con un plazo aproximado desde 24 horas, sin volcar tus datos.",
          alt="Técnico aplicando pasta térmica al procesador durante el mantenimiento de un PC Gaming",
@@ -357,7 +376,98 @@ RESENAS = [
      "autor": "Alberto P.", "fecha": "noviembre 2025"},
 ]
 
-def reviews_block():
+# Preguntas frecuentes: SOLO respuestas que ya afirma la web (fuente al lado). Coste de la revisión, garantía,
+# portátiles, medios de pago y horario quedan fuera hasta que Jose los confirme.
+# Las tarifas se leen de SERVICES (un solo sitio que cambiar). "@P@" se sustituye por el prefijo de la página ("" o "../").
+def _tarifa(slug, clave):
+    v = dict(next(s for s in SERVICES if s["slug"] == slug)["facts"])[clave]
+    return (v[0].lower() + v[1:]).replace(" €", " €")   # el € no se separa de la cifra
+
+FAQ = {
+    "coste": ("¿Cuánto cuesta?",   # SERVICES: reparación (presupuesto tras revisión), mantenimiento, montaje, BIOS, asistencia remota
+              'Depende del trabajo. La <a href="@P@servicio/reparacion-pc.html">reparación</a> se presupuesta tras revisar el equipo, sin compromiso. '
+              f'El mantenimiento cuesta {_tarifa("mantenimiento-pc-gaming", "Precio")}; el montaje con tus piezas, {_tarifa("servicio-de-montaje", "Precio")}; '
+              f'la actualización de BIOS, {_tarifa("actualizacion-bios", "Precio")}, y la asistencia remota, {_tarifa("asistencia-remota", "Precio")}. '
+              'Consulta <a href="@P@servicios.html">todos los servicios</a>.'),
+    "precio_antes": ("¿Sabré el precio antes de que empecéis a reparar?",   # hero pasos 2-4 + SERVICES reparación
+                     "Sí. Revisamos el equipo delante de ti, te explicamos qué le ocurre y qué soluciones tiene, "
+                     "y te damos el presupuesto, sin compromiso, antes de empezar."),
+    "plazo": ("¿Cuánto tarda una reparación?",   # sobre-mi (uno o dos días) + SERVICES mantenimiento (desde 24 h, orientativo)
+              "Muchas reparaciones se entregan en uno o dos días, y el mantenimiento tiene un plazo aproximado desde 24 horas. "
+              "Son plazos orientativos: dependen del estado del equipo y de la carga de trabajo del taller."),
+    "cita": ("¿Tengo que pedir cita?",   # SERVICES (Atendemos con cita previa) + contacto (modelo y descripción de la avería)
+             f'Sí, atendemos con cita previa en L\'Hospitalet. Pídela por <a href="{WA_CITA}">WhatsApp</a> o llamando al <a href="{TEL_LINK}">{TEL}</a>, '
+             "y ten a mano el modelo del equipo y una descripción de la avería."),
+    "remota": ("¿Podéis ayudarme sin llevar el equipo al taller?",   # SERVICES asistencia-remota
+               "Si es un problema de software y el equipo enciende y tiene conexión a Internet, sí: por "
+               f'<a href="@P@servicio/asistencia-remota.html">asistencia remota</a>, a {_tarifa("asistencia-remota", "Precio")}. '
+               "Llámanos y valoramos si se puede resolver a distancia."),
+    "informado": ("¿Me mantendréis informado durante la reparación?",   # sobre-mi: "Explica cada paso…" + "Mantiene informado… con fotos y mensajes"
+                  "Sí. Te explicamos cada paso: qué le pasa al equipo, qué hace falta y cuánto cuesta, y pedimos tu autorización antes de seguir. "
+                  "Durante la reparación te mantenemos informado con fotos y mensajes."),
+    "mejorar": ("¿Merece la pena mejorar mi PC en vez de comprar uno nuevo?",   # SERVICES actualizacion-pc-gaming (p y d)
+                "Muchas veces basta con cambiar una pieza: más RAM, un SSD/NVMe o una gráfica nueva. Te ayudamos a elegir qué "
+                '<a href="@P@servicio/actualizacion-pc-gaming.html">actualizar</a> primero según lo que usas y tu presupuesto, con la compatibilidad comprobada.'),
+    "asesoramiento": ("¿Me ayudáis a elegir las piezas antes de comprar?",   # SERVICES asesoramiento-compra (tarifa, listado validado, nota de montaje)
+                      f'Sí. Con el <a href="@P@servicio/asesoramiento-compra.html">asesoramiento de compra</a> ({_tarifa("asesoramiento-compra", "Tarifa")}) '
+                      "analizamos para qué vas a usar el equipo y te damos un listado de piezas compatibles y equilibrado para tu presupuesto. "
+                      "Si lo prefieres, también lo montamos en el taller."),
+    "a_medida": ("¿Montáis PC Gaming a medida?",   # pc-gaming (configuraciones AMD e Intel, bajo pedido) + fichas (precio, plazo y cambios de componentes)
+                 'Sí. Tenemos <a href="@P@pc-gaming.html">configuraciones AMD Ryzen e Intel</a> que montamos bajo pedido. '
+                 "Al pedir cita te confirmamos precio, plazo de entrega y posibles cambios de componentes."),
+    "datos": ("¿Hace falta volcar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
+              'No: el <a href="@P@servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
+    "piezas": ("¿Puedo llevar mis propias piezas para que me montéis el PC?",   # SERVICES servicio-de-montaje
+               'Sí. Si ya tienes los componentes, comprobamos que sean compatibles, los montamos y te entregamos el equipo listo para usar. '
+               f'El <a href="@P@servicio/servicio-de-montaje.html">servicio de montaje</a> cuesta {_tarifa("servicio-de-montaje", "Precio")} y el importe mínimo se abona por adelantado.'),
+    "pago": ("¿Hay que pagar algo por adelantado?",   # SERVICES montaje y asistencia remota
+             "En el servicio de montaje se abona por adelantado el importe mínimo, y en la asistencia remota, la primera hora."),
+}
+
+def faq_block(keys, p="", home=False):
+    """Lista de <details>. home=True: variante de portada (antetítulo, título a la izquierda y salida a WhatsApp para otras dudas)."""
+    # name="faq": acordeón nativo, solo una respuesta abierta a la vez (main.js lo replica en navegadores sin soporte)
+    items = "".join(f'<details name="faq"><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1].replace("@P@", p)}</p></details>' for k in keys)
+    if home:
+        duda = wa("Hola, tengo una duda antes de pedir cita: ")
+        return ('\n<section class="faq-h" id="preguntas" aria-labelledby="faq-title"><div class="wrap faq-h-in"><div class="faq-h-head">'
+                '<p class="kicker">Preguntas frecuentes</p><h2 id="faq-title">Antes de traer tu equipo</h2>'
+                f'<p class="faq-more">¿Tienes otra duda? <a href="{duda}">Pregúntanos por WhatsApp</a></p></div>'
+                f'<div class="faq-l">{items}</div>'
+                # Tarjeta bajo el título (en móvil va tras las preguntas): foto real del taller y datos ya publicados (contacto y SERVICES).
+                f'<div class="card faq-card"><img src="assets/img/despues.webp" alt="Interior de un PC Gaming limpio tras pasar por el taller" loading="lazy"{img_dims("despues.webp")}>'
+                '<div class="faq-card-b"><h3>Taller en L\'Hospitalet</h3>'
+                '<p>Atendemos con cita previa. Al pedirla, ten a mano el modelo del equipo y una descripción de la avería.</p>'
+                f'<p class="faq-card-dir">{CALLE} · {CP} {CIUDAD}</p>'
+                f'<div class="faq-card-l"><a href="{E(MAPS)}" rel="noopener">{ic("pin")}Cómo llegar</a><a href="trabajos-realizados.html">Ver trabajos realizados {ic("arrow")}</a></div></div></div>'
+                '</div></section>\n')
+    return f'<section class="wrap sec faq"><h2>Preguntas frecuentes</h2><div class="faq-l">{items}</div></section>'
+
+# Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
+# El título es descriptivo; no se añade nada que la reseña no diga.
+CASOS = [
+    ("Green Potion", "No arrancaba: resuelto en cuestión de 24 h",
+     ["no me encendía el ordenador y me daba un error antes de llegar al escritorio", "en cuestión de 24h ya tenía el ordenador como cuando lo compré"]),
+    ("Jan B.", "No encendía bien y se calentaba mucho",
+     ["Lleve mi ordenador porque no encendía correctamente y se calentaba mucho, ahora funciona perfecto, lo ha limpiado y ha cambiado toda la ventilación."]),
+    ("Hodei A.", "Pantalla negra tras tocar la BIOS",
+     ["Directamente pantalla negra y no cargaba nada, ni siquiera podía volver a acceder a la BIOS. Se lo llevé a Jose y me lo arregló.", "Era un arreglo complicado, con alguna soldadura en la placa base."]),
+]
+
+def casos_block():
+    out = []
+    for autor, titulo, frags in CASOS:
+        r = next(x for x in RESENAS if x["autor"] == autor)
+        for fr in frags:
+            assert fr in r["texto"], f"CASOS: el fragmento no es literal en la reseña de {autor}: {fr!r}"
+        cita = " […] ".join(frags)
+        out.append(f'<figure class="card case"><h3>{E(titulo)}</h3><blockquote><p>«{E(cita)}»</p></blockquote>'
+                   f'<figcaption>{E(autor)} · {E(r["fecha"])} · reseña en Google</figcaption></figure>')
+    return ('<section class="wrap sec cases"><h2>Casos contados por los clientes</h2><p class="muted">Fragmentos literales de reseñas publicadas en Google.</p>'
+            f'<div class="g3">{"".join(out)}</div><a class="more row" href="opiniones.html">Leer todas las opiniones {ic("arrow")}</a></section>')
+
+def reviews_block(marquee=True):
+    """marquee=False: cuadrícula estática con el texto completo (página de opiniones); la portada conserva el marquee."""
     stars = ic("star") * 5
     fecha = f" · a fecha de {E(RES['fecha'])}" if RES["fecha"] else ""
     escribir = f'<a class="btn ghost" href="{E(RES["escribir"])}" rel="noopener">{ic("star")}Dejar una opinión</a>' if RES["escribir"] else ""
@@ -375,7 +485,7 @@ def reviews_block():
         ph = '<figure class="card rv-card ph"><div class="rv-stars" aria-hidden="true">' + stars + '</div><blockquote><p><mark class="pend">[PENDIENTE: texto de una reseña real de Google]</mark></p></blockquote><figcaption><mark class="pend">[Nombre · mes y año]</mark></figcaption></figure>'
         cards = ph * 3
     # Con reseñas reales: cuadrícula estática (sin JS o con movimiento reducido) que main.js convierte en dos filas en movimiento (marquee).
-    if RESENAS:
+    if RESENAS and marquee:
         return head + f'<div class="rv-marquee" data-marquee><div class="rv-grid">{cards}</div></div>'
     return head + f'<div class="rv-grid">{cards}</div>'
 
@@ -385,7 +495,7 @@ MOBILE_BAR = (
     '<div class="m-act"><button type="button" class="m-up" id="m-up" aria-label="Volver arriba"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" '
     'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg></button>'
     f'<a class="m-btn call" href="{TEL_LINK}" aria-label="Llamar al taller">{ic("phone")}<span>Llamar</span></a>'
-    f'<a class="m-btn wa" href="{WA}" rel="noopener" aria-label="Pedir cita por WhatsApp">{ic("wa")}<span>Pedir cita</span></a></div></aside>')
+    f'<a class="m-btn wa" href="{WA_CITA}" rel="noopener" aria-label="Pedir cita por WhatsApp">{ic("wa")}<span>Pedir cita</span></a></div></aside>')
 
 def reviews_home():
     return ('\n<section class="rv" id="opiniones" aria-labelledby="rv-title"><div class="wrap"><p class="kicker">Opiniones</p>'
@@ -417,17 +527,17 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
     skip = "" if is_404 else '<a class="skip" href="#main">Saltar al contenido</a>'
     nav = nav_html(p, active)
     cta = f"""<section class="ctap"><div class="wrap ctap-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
-<div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
+<div class="btns"><a class="btn white" href="{WA_CITA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot = f"""<footer class="foot"><div class="wrap foot-in"><div><strong>VENTAREPARACIONPC</strong><br><span>L'Hospitalet de Llobregat · {TEL}</span></div>
 <nav aria-label="Pie"><a href="{p}contacto.html">Contacto</a><a href="{p}ubicacion.html">Ubicación</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></nav></div></footer>"""
     cta_h = f"""<section class="ctah"><div class="wrap ctah-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
-<div class="btns"><a class="btn white" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
+<div class="btns"><a class="btn white" href="{WA_CITA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot_h = f"""<footer class="fh"><div class="wrap fh-in">
 <div class="fh-l"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42" loading="lazy"><p>Servicio técnico y PC Gaming a medida en L'Hospitalet de Llobregat.</p>
 <nav class="fh-nav" aria-label="Pie"><a href="{p}servicios.html">Servicios</a><a href="{p}pc-gaming.html">PC Gaming</a><a href="{p}sobre-mi.html">Sobre mí</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}ubicacion.html">Ubicación</a></nav>
-<div class="fh-soc"><a href="{WA}" rel="noopener" aria-label="WhatsApp">{ic("wa")}</a><a href="{TEL_LINK}" aria-label="Llamar">{ic("phone")}</a><a href="mailto:{MAIL}" aria-label="Correo">{ic("mail")}</a><a href="{p}ubicacion.html" aria-label="Ubicación">{ic("pin")}</a></div></div>
+<div class="fh-soc"><a href="{WA_CITA}" rel="noopener" aria-label="WhatsApp">{ic("wa")}</a><a href="{TEL_LINK}" aria-label="Llamar">{ic("phone")}</a><a href="mailto:{MAIL}" aria-label="Correo">{ic("mail")}</a><a href="{p}ubicacion.html" aria-label="Ubicación">{ic("pin")}</a></div></div>
 <div class="fh-card"><p class="fh-h">Contacto</p><a class="fh-big" href="mailto:{MAIL}">{MAIL}</a><a class="fh-big" href="{TEL_LINK}">{TEL}</a>
-<address>{CALLE}<br>{CP} {CIUDAD}<br>Con cita previa</address><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a></div>
+<address>{CALLE}<br>{CP} {CIUDAD}<br>Con cita previa</address><a class="btn" href="{WA_CITA}">{ic("wa")}Pedir cita por WhatsApp</a></div>
 <div class="fh-legal"><span>© 2026 VENTAREPARACIONPC</span><a href="{p}aviso-legal.html">Aviso legal</a><a href="{p}politica-de-cookies.html">Política de cookies</a></div></div></footer>"""
     if active == "index.html":
         cta, foot = cta_h, foot_h
@@ -441,8 +551,8 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 
 <header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button type="button" class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
-<nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA}">{ic("cal")}Pedir cita</a></nav>
-<a class="btn small desk-only" href="{WA}">{ic("cal")}Pedir cita</a><div class="nav-ov" id="nav-ov" aria-hidden="true"></div></div></header>
+<nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA_CITA}">{ic("cal")}Pedir cita</a></nav>
+<a class="btn small desk-only" href="{WA_CITA}">{ic("cal")}Pedir cita</a><div class="nav-ov" id="nav-ov" aria-hidden="true"></div></div></header>
 <div class="draft-tag" role="note">Borrador de diseño</div><main id="main">{body}</main>{"" if solo else cta}{"" if solo else foot}{"" if (solo or is_404) else MOBILE_BAR}<script src="{p}assets/js/main.js" defer></script></body></html>"""
 
 def head_band(crumbs, h1, sub=""):
@@ -569,31 +679,31 @@ def build():
     # ---- Inicio
     body = f"""<section class="hg" id="hero"><div class="hg-c">
 <div class="hg-l">
-<div class="hg-top"><p class="hg-kick">Servicio técnico en L'Hospitalet de Llobregat</p>
+<div class="hg-top"><div class="hg-meta"><p class="hg-kick">Servicio técnico en L'Hospitalet de Llobregat</p><a class="hg-seal" href="#opiniones">{ic("star")}<b>{E(RES["nota"])}</b> · {E(RES["total"])} opiniones en Google</a></div>
 <h1>Expertos en <em>Reparación y Montaje</em> de Ordenadores</h1>
-<p class="hg-sum">En VentaReparacionPC cuidamos de tu equipo como si fuera nuestro.</p></div>
+<p class="hg-sum">Revisamos tu equipo delante de ti antes de tocar nada.</p></div>
 <div class="hg-proc"><p class="hg-eb">Así trabajamos</p><h2>Servicio técnico transparente</h2><p class="hg-ps">Un proceso claro y sencillo para que siempre sepas qué le ocurre a tu equipo y qué soluciones tiene.</p>
 <ol class="hg-st"><li><span class="n">1</span><span class="ico">{ic("pc")}</span><b>Traes tu equipo</b><span class="d">Nos cuentas el problema y revisamos tu PC Gaming.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">2</span><span class="ico">{ic("search")}</span><b>Revisión delante de ti</b><span class="d">Analizamos el hardware delante del cliente.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">3</span><span class="ico">{ic("chat")}</span><b>Explicación clara</b><span class="d">Te mostramos el origen del problema y las posibles soluciones.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">4</span><span class="ico">{ic("doc")}</span><b>Presupuesto sin compromiso</b><span class="d">Te damos el precio tras revisar tu equipo.</span></li></ol></div>
 <div class="hg-bot"><p class="hg-small">Nos especializamos en la reparación de ordenadores de sobremesa de todas las marcas, resolviendo problemas de lentitud, fallos de arranque o de placa base. Además, somos apasionados del hardware. Diseñamos tu PC Gaming personalizado pieza a pieza, optimizando cada euro de tu presupuesto para ofrecerte el máximo rendimiento en tus juegos favoritos. Todo ello con componentes de primeras marcas y total garantía.</p>
-<div class="hg-cta"><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div>
+<div class="hg-cta"><a class="btn" href="{WA_CITA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}" aria-label="Llamar al {TEL}">{ic("phone")}{TEL}</a></div></div>
 </div>
 <figure class="hg-r"><img src="assets/img/CAJA-ARGB-7-VENT.---11.webp" alt="PC gaming con caja de cristal y ventiladores ARGB" fetchpriority="high"{img_dims("CAJA-ARGB-7-VENT.---11.webp")}>
 
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home()
+""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "asesoramiento", "a_medida", "piezas", "cita"], home=True)
     body = responsive_imgs(body)
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
-    body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
-        f'<section class="wrap sec"><div class="g2 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
-    body = responsive_imgs(body, sizes="(max-width: 960px) calc(100vw - 42px), 45vw", eager=2)
-    write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
+    body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Reparación, mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
+        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["precio_antes", "plazo", "informado", "remota", "datos", "piezas", "pago"])
+    body = responsive_imgs(body, sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 960px) 45vw, 30vw", eager=3)
+    write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de reparación, mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
         body = head_band([("../index.html", "Inicio"), ("../servicios.html", "Servicios"), (None, s["t"])], s["t"], s["d"]) + service_article(s) + f"""
-<aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
+<aside class="card side"><h3>Pide cita</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{wa(f"Hola, me interesa el servicio «{s['t']}» y quiero pedir cita.")}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "Service", "name": s["t"], "serviceType": s["t"], "description": s["d"], "url": "%%URL%%",
                 "provider": {"@id": SITE + "/#negocio"}, "areaServed": {"@type": "City", "name": CIUDAD}})
         write(f"servicio/{s['slug']}.html", page("", f"{s['t']} | VRPC", s.get("m", s["d"]), body, "servicios.html", 1, extra_head=negocio_ld(), img=asset_img(s["img"]), img_alt=s["alt"]))
@@ -603,12 +713,12 @@ def build():
 <div class="ba-g"><figure class="card"><img src="assets/img/antes.webp" alt="Interior del PC con polvo acumulado" loading="lazy" data-zoom{img_dims("antes.webp")}><figcaption>{ic("alert","r")}Antes del mantenimiento{ic("zoom","z")}</figcaption></figure>
 <figure class="card"><img src="assets/img/despues.webp" alt="Interior del PC limpio" loading="lazy" data-zoom{img_dims("despues.webp")}><figcaption>{ic("check","g")}Después del mantenimiento{ic("zoom","z")}</figcaption></figure></div>
 <p class="muted">Las fotos muestran el interior del equipo antes y después de retirar el polvo acumulado. Pulsa en cualquiera para ampliarla.</p></div>
-<aside><div class="card side"><h3>Pide cita para tu equipo</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
-<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>"""
-    write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Ejemplos de trabajos realizados en el taller: antes y después de una limpieza interna de PC Gaming.", body, "trabajos-realizados.html"))
+<aside><div class="card side"><h3>Pide cita para tu equipo</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{wa("Hola, quiero pedir cita para revisar mi equipo.")}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
+<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>""" + casos_block()
+    write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Trabajos realizados en el taller: antes y después de una limpieza interna y casos de reparación contados por los clientes.", body, "trabajos-realizados.html"))
 
     # ---- Opiniones
-    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block()}</section>
+    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block(marquee=False)}</section>
 <section class="wrap sec">
 <aside class="card side"><h2 class="h3">Conoce el taller</h2><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a><a class="more row" href="ubicacion.html">Ubicación {ic("arrow")}</a><a class="more row" href="contacto.html">Contacto {ic("arrow")}</a></aside></section>"""
     write("opiniones.html", page("", "Opiniones de clientes | VRPC", "Opiniones de clientes de VENTAREPARACIONPC en Google.", body, "opiniones.html"))
@@ -622,21 +732,24 @@ def build():
 <li>Mantiene informado al cliente durante la reparación, con fotos y mensajes.</li>
 <li>Plazos cortos: muchas reparaciones se entregan en uno o dos días.</li></ul>
 <p class="muted">Resumen de lo que más repiten los clientes en sus <a href="opiniones.html">reseñas de Google</a> ({E(RES['nota'])} sobre 5, {E(RES['total'])} opiniones a fecha de {E(RES['fecha'])}).</p></article>
-<aside class="card side"><h2 class="h3">Habla con José</h2><p>Cuéntale qué le pasa a tu equipo y te orienta antes de traerlo.</p><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a><a class="more row" href="opiniones.html">Ver opiniones de clientes {ic("arrow")}</a><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a></aside></section>"""
+<aside class="card side"><h2 class="h3">Habla con José</h2><p>Cuéntale qué le pasa a tu equipo y te orienta antes de traerlo.</p><a class="btn" href="{wa("Hola, quiero consultar qué le pasa a mi equipo antes de llevarlo.")}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a><a class="more row" href="opiniones.html">Ver opiniones de clientes {ic("arrow")}</a><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a></aside></section>"""
     write("sobre-mi.html", page("", "Sobre mí | VRPC", "Conoce a José, el técnico informático de VRPC en L'Hospitalet de Llobregat, y cómo trabaja.", body, "sobre-mi.html", extra_head=negocio_ld()))
 
     # ---- PC Gaming
-    cards ="".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
+    cards ="".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}" data-price="{int(c['price'].replace('.', ''))}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><p class="pc-price">{c['price']} €</p><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
     body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button type="button" class="chip on" data-f="all">Todos</button><button type="button" class="chip" data-f="AMD">AMD Ryzen</button><button type="button" class="chip" data-f="Intel">Intel</button></div>
 <div class="searchrow"><label for="q">Buscar</label><div><input id="q" type="search" placeholder="Por ejemplo, Ryzen 7 o RTX 5070"><span id="count" aria-live="polite">{len(pcs)} resultados</span></div></div>
+<div class="sortrow" id="sortrow" hidden><label for="orden">Ordenar</label><select id="orden"><option value="">Orden habitual</option><option value="asc">Precio: de menor a mayor</option><option value="desc">Precio: de mayor a menor</option></select></div>
+<p class="muted pc-note">Precios de referencia (última actualización conocida: <span class="nw">31-07-26</span>). Confirma disponibilidad y plazo de entrega al pedir cita.</p>
 <div class="g4" id="grid">{cards}</div></section>"""
+    body = responsive_imgs(body, sizes="(max-width: 480px) calc(100vw - 62px), (max-width: 960px) calc(50vw - 49px), min(22vw, 385px)", eager=4)
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
     for c in pcs:
         specs = [x.strip() for x in re.split(r"\.\s+", c["desc"]) if x.strip()]
         body = head_band([("../index.html", "Inicio"), ("../pc-gaming.html", "PC Gaming"), (None, E(c["title"]))], E(c["title"])) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover contain" src="../{asset_img(c['img'])}" alt="Caja del equipo {E(c['title'])}" fetchpriority="high"{img_dims(c['img'])}>
 <p class="price">{c['price']} € <small>precio sin descuento</small></p><ul class="list">{"".join(f"<li>{E(x.rstrip('.'))}</li>" for x in specs)}</ul>
 <ul class="list"><li>Montaje bajo pedido</li><li>Windows 11 Pro licencia oficial (según configuración)</li></ul><p class="muted">Precios de referencia (última actualización conocida: 31-07-26). Confirma disponibilidad y plazo de entrega al pedir cita.</p></article>
-<aside class="card side"><h2 class="h3">Pide cita para este equipo</h2><p>Te confirmamos precio, plazo de entrega y posibles cambios de componentes.</p><a class="btn" href="{WA}?text={E(c['title'].replace(' ','%20'))}">{ic("wa")}Consultar por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>"""
+<aside class="card side"><h2 class="h3">Pide cita para este equipo</h2><p>Te confirmamos precio, plazo de entrega y posibles cambios de componentes.</p><a class="btn" href="{wa(f"Hola, me interesa el equipo {c['title']} ({c['price']} €). ¿Está disponible?")}">{ic("wa")}Consultar por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></aside></section>"""
         pc_title = f"{c['title']} | PC Gaming VRPC"
         if len(pc_title) > 60:
             pc_title = f"{c['title']} | VRPC"
@@ -650,7 +763,7 @@ def build():
     for b in BLOG:
         more = "".join(f'<a class="more row" href="{o["slug"]}.html">{o["t"]} {ic("arrow")}</a>' for o in BLOG if o is not b)
         secs = "".join(f"<h2>{h}</h2><p>{t}</p>" for h, t in b["sections"])
-        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" fetchpriority="high"{img_dims(b['img'])}>{secs}<p><a class="btn" href="{WA}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>""" + \
+        body = head_band([("../index.html", "Inicio"), ("../blog.html", "Blog"), (None, b["cat"])], b["t"], b["d"]) + f"""<section class="wrap sec two"><article class="card prose"><img class="cover" src="../{asset_img(b['img'])}" alt="{E(b['alt'])}" fetchpriority="high"{img_dims(b['img'])}>{secs}<p><a class="btn" href="{wa(f"Hola, he leído la guía «{b['t']}» y quiero consultar por mi equipo.")}">{ic("cal")}Solicitar cita previa</a></p></article><aside class="card side"><h3>Más guías</h3>{more}</aside></section>""" + \
             ld({"@context": "https://schema.org", "@type": "BlogPosting", "headline": b["t"], "description": b["d"],
                 "image": f"{SITE}/{asset_img(b['img'])}", "url": "%%URL%%",
                 "mainEntityOfPage": {"@type": "WebPage", "@id": "%%URL%%"}, "inLanguage": "es",
@@ -658,9 +771,9 @@ def build():
         write(f"blog/{b['slug']}.html", page("", f"{b['t']} | Blog VRPC", b["d"], body, "blog.html", 1, extra_head=negocio_ld(), img=asset_img(b["img"]), og_type="article", img_alt=b["alt"]))
 
     # ---- Contacto / ubicación / legales
-    body = head_band([("index.html", "Inicio"), (None, "Contacto")], "Contacto", "Contacta con VRPC para concertar una cita antes de traer tu ordenador.") + f"""<section class="wrap sec"><div class="g2"><div class="card box"><h2>Pide cita</h2><p>Ten a mano el modelo del equipo y una descripción de la avería o de la mejora que quieres hacer.</p><div class="btns"><a class="btn" href="{WA}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}{TEL}</a></div></div>
+    body = head_band([("index.html", "Inicio"), (None, "Contacto")], "Contacto", "Contacta con VRPC para concertar una cita antes de traer tu ordenador.") + f"""<section class="wrap sec"><div class="g2"><div class="card box"><h2>Pide cita</h2><p>Ten a mano el modelo del equipo y una descripción de la avería o de la mejora que quieres hacer.</p><div class="btns"><a class="btn" href="{wa(chr(10).join(["Hola, quiero pedir cita.", "Equipo (modelo): ", "Qué le pasa o qué quiero mejorar: "]))}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}{TEL}</a></div></div>
 <div class="card box"><h2>Cómo llegar</h2><p>{DIR}<br>Atención con cita previa.</p><a class="btn ghost" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div>
-<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>"""
+<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>""" + faq_block(["precio_antes", "plazo", "remota", "pago"])
     write("contacto.html", page("", "Contacto | VRPC", "Contacto y cita previa en VENTAREPARACIONPC, L'Hospitalet de Llobregat.", body, "contacto.html", extra_head=negocio_ld()))
     body = head_band([("index.html", "Inicio"), (None, "Ubicación")], "Ubicación") + f'<section class="wrap sec"><div class="card box"><p>{DIR}</p><p>Atención con cita previa. Teléfono: <a href="{TEL_LINK}">{TEL}</a></p><a class="btn" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div></section>'
     write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde está VentaReparacionPC: Carrer de les Aigües del Llobregat, 115, interior, 08906 L'Hospitalet de Llobregat. Atención con cita previa.", body, extra_head=negocio_ld()))

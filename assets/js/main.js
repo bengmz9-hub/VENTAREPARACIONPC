@@ -46,7 +46,8 @@
         var ok = (f === 'all' || x.dataset.brand === f) && x.dataset.t.indexOf(q) > -1;
         x.hidden = !ok; if (ok) k++;
       });
-      c.textContent = k + (k === 1 ? ' resultado' : ' resultados');
+      c.textContent = k + (k === 1 ? ' resultado' : ' resultados') +
+        (orden && orden.value ? (orden.value === 'asc' ? ' · de menor a mayor precio' : ' · de mayor a menor precio') : '');
     };
     document.getElementById('filters').addEventListener('click', function (e) {
       var t = e.target.closest('.chip'); if (!t) return;
@@ -54,6 +55,20 @@
       t.classList.add('on'); f = t.dataset.f; run();
     });
     document.getElementById('q').addEventListener('input', function () { q = this.value.trim().toLowerCase(); run(); });
+    // Orden por precio (data-price); "Orden habitual" recupera el orden del HTML. El filtro sigue funcionando porque se mueven los mismos nodos.
+    var orden = document.getElementById('orden');
+    if (orden) orden.addEventListener('change', function () {
+      var v = this.value, lista = cards.slice();
+      if (v) lista.sort(function (a, b) { return (a.dataset.price - b.dataset.price) * (v === 'asc' ? 1 : -1); });
+      lista.forEach(function (x) { grid.appendChild(x); });
+      run();   // el contador (aria-live) anuncia también el orden
+    });
+    var sortrow = document.getElementById('sortrow');
+    if (sortrow) sortrow.hidden = false;   // sin JS el selector no haría nada: solo se muestra si funciona
+    // El navegador puede recordar la búsqueda y el orden al recargar: se aplican para que lista y contador cuadren.
+    var qi = document.getElementById('q');
+    if (qi && qi.value) { q = qi.value.trim().toLowerCase(); run(); }
+    if (orden && orden.value) orden.dispatchEvent(new Event('change'));
     var porHash = function () {
       var m = { todos: 'all', amd: 'AMD', intel: 'Intel' }, v = m[location.hash.slice(1).toLowerCase()];
       if (!v) return;
@@ -144,3 +159,11 @@
   window.addEventListener('resize', f);
   window.addEventListener('rv-montado', f);
 })();
+
+// Preguntas frecuentes: solo una respuesta abierta a la vez. Los navegadores actuales lo hacen solos con <details name="faq">;
+// esto cubre los que aún no lo admiten (al abrir una, se cierran las demás de la misma lista).
+document.addEventListener('toggle', function (e) {
+  var d = e.target;
+  if (!d.open || !d.matches || !d.matches('.faq-l details')) return;
+  [].forEach.call(d.parentNode.querySelectorAll('details[open]'), function (x) { if (x !== d) x.open = false; });
+}, true);
