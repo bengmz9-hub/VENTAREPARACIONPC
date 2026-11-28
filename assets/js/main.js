@@ -54,6 +54,13 @@
       t.classList.add('on'); f = t.dataset.f; run();
     });
     document.getElementById('q').addEventListener('input', function () { q = this.value.trim().toLowerCase(); run(); });
+    // Orden por precio (data-price); "Orden habitual" recupera el orden del HTML. El filtro sigue funcionando porque se mueven los mismos nodos.
+    var orden = document.getElementById('orden');
+    if (orden) orden.addEventListener('change', function () {
+      var v = this.value, lista = cards.slice();
+      if (v) lista.sort(function (a, b) { return (a.dataset.price - b.dataset.price) * (v === 'asc' ? 1 : -1); });
+      lista.forEach(function (x) { grid.appendChild(x); });
+    });
     var porHash = function () {
       var m = { todos: 'all', amd: 'AMD', intel: 'Intel' }, v = m[location.hash.slice(1).toLowerCase()];
       if (!v) return;

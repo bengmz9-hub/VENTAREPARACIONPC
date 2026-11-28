@@ -646,10 +646,13 @@ def build():
     write("sobre-mi.html", page("", "Sobre mí | VRPC", "Conoce a José, el técnico informático de VRPC en L'Hospitalet de Llobregat, y cómo trabaja.", body, "sobre-mi.html", extra_head=negocio_ld()))
 
     # ---- PC Gaming
-    cards ="".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
+    cards ="".join(f"""<a class="card pc" href="pc/{c['slug']}.html" data-brand="{c['brand']}" data-t="{E(c['title'].lower())}" data-price="{int(c['price'].replace('.', ''))}"><img src="{asset_img(c['img'])}" alt="" loading="lazy"{img_dims(c['img'])}><div class="pc-b"><span class="brand-tag {c['brand'].lower()}">{c['brand'].upper() if c['brand']=='Intel' else 'AMD'}</span><h2 class="h3">{E(c['title'])}</h2><p class="pc-price">{c['price']} €</p><span class="more">Ver ficha {ic("arrow")}</span></div></a>""" for c in pcs)
     body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button type="button" class="chip on" data-f="all">Todos</button><button type="button" class="chip" data-f="AMD">AMD Ryzen</button><button type="button" class="chip" data-f="Intel">Intel</button></div>
 <div class="searchrow"><label for="q">Buscar</label><div><input id="q" type="search" placeholder="Por ejemplo, Ryzen 7 o RTX 5070"><span id="count" aria-live="polite">{len(pcs)} resultados</span></div></div>
+<div class="sortrow"><label for="orden">Ordenar</label><select id="orden"><option value="">Orden habitual</option><option value="asc">Precio: de menor a mayor</option><option value="desc">Precio: de mayor a menor</option></select></div>
+<p class="muted pc-note">Precios de referencia (última actualización conocida: 31‑07‑26). Confirma disponibilidad y plazo de entrega al pedir cita.</p>
 <div class="g4" id="grid">{cards}</div></section>"""
+    body = responsive_imgs(body, sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 960px) 46vw, 23vw")
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
     for c in pcs:
         specs = [x.strip() for x in re.split(r"\.\s+", c["desc"]) if x.strip()]
