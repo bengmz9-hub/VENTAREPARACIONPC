@@ -376,7 +376,8 @@ RESENAS = [
      "autor": "Alberto P.", "fecha": "noviembre 2025"},
 ]
 
-def reviews_block():
+def reviews_block(marquee=True):
+    """marquee=False: cuadrícula estática con el texto completo (página de opiniones); la portada conserva el marquee."""
     stars = ic("star") * 5
     fecha = f" · a fecha de {E(RES['fecha'])}" if RES["fecha"] else ""
     escribir = f'<a class="btn ghost" href="{E(RES["escribir"])}" rel="noopener">{ic("star")}Dejar una opinión</a>' if RES["escribir"] else ""
@@ -394,7 +395,7 @@ def reviews_block():
         ph = '<figure class="card rv-card ph"><div class="rv-stars" aria-hidden="true">' + stars + '</div><blockquote><p><mark class="pend">[PENDIENTE: texto de una reseña real de Google]</mark></p></blockquote><figcaption><mark class="pend">[Nombre · mes y año]</mark></figcaption></figure>'
         cards = ph * 3
     # Con reseñas reales: cuadrícula estática (sin JS o con movimiento reducido) que main.js convierte en dos filas en movimiento (marquee).
-    if RESENAS:
+    if RESENAS and marquee:
         return head + f'<div class="rv-marquee" data-marquee><div class="rv-grid">{cards}</div></div>'
     return head + f'<div class="rv-grid">{cards}</div>'
 
@@ -627,7 +628,7 @@ def build():
     write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Ejemplos de trabajos realizados en el taller: antes y después de una limpieza interna de PC Gaming.", body, "trabajos-realizados.html"))
 
     # ---- Opiniones
-    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block()}</section>
+    body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block(marquee=False)}</section>
 <section class="wrap sec">
 <aside class="card side"><h2 class="h3">Conoce el taller</h2><a class="more row" href="trabajos-realizados.html">Trabajos realizados {ic("arrow")}</a><a class="more row" href="ubicacion.html">Ubicación {ic("arrow")}</a><a class="more row" href="contacto.html">Contacto {ic("arrow")}</a></aside></section>"""
     write("opiniones.html", page("", "Opiniones de clientes | VRPC", "Opiniones de clientes de VENTAREPARACIONPC en Google.", body, "opiniones.html"))

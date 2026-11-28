@@ -315,6 +315,10 @@ mark.pend{background:#fff1a8;color:#5c4400;padding:1px 6px;border-radius:5px;fon
 .rv-card blockquote.is-cut{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 30px),transparent)}.rv-card blockquote p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink)}
 .rv-card figcaption{font-size:12px;color:var(--mut)}.rv-card .rv-stars .ic{width:13px;height:13px}
 .rv-card.ph{border-style:dashed}
+/* Página de opiniones: mosaico estático con cada reseña completa (sin altura limitada ni marquee) */
+.rv-page .rv-grid{display:block;columns:3 300px;column-gap:14px}
+.rv-page .rv-card{break-inside:avoid;margin:0 0 14px}
+.rv-page .rv-card blockquote{flex:none;max-height:none;overflow:visible}
 /* Marquee de reseñas: dos filas en sentidos opuestos con bordes difuminados. Lo monta main.js (si hay movimiento permitido); sin JS queda la cuadrícula. */
 .rv-marquee.is-live{margin-top:22px;overflow:hidden;display:grid;gap:14px;-webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
 .rv-row{overflow:hidden}
