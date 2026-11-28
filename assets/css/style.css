@@ -319,6 +319,15 @@ mark.pend{background:#fff1a8;color:#5c4400;padding:1px 6px;border-radius:5px;fon
 .rv-card blockquote.is-cut{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 30px),transparent)}.rv-card blockquote p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink)}
 .rv-card figcaption{font-size:12px;color:var(--mut)}.rv-card .rv-stars .ic{width:13px;height:13px}
 .rv-card.ph{border-style:dashed}
+/* Preguntas frecuentes (details nativo: accesible con teclado y sin JS) */
+.faq{padding-top:0}.faq h2{margin:0 0 14px}
+.faq-l{display:grid;gap:10px;max-width:860px}
+.faq-l details{background:#fff;border:1px solid var(--line);border-radius:var(--r)}
+.faq-l summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;font-weight:700;cursor:pointer;list-style:none}
+.faq-l summary::-webkit-details-marker{display:none}
+.faq-l summary::after{content:"+";font-size:22px;line-height:1;color:var(--bl);flex:none}
+.faq-l details[open] summary::after{content:"\2212"}
+.faq-l details p{margin:0;padding:0 18px 16px;font-size:14.5px;line-height:1.6;color:var(--ink)}
 /* Trabajos realizados: casos con la cita literal de la reseña */
 .cases{padding-top:0}.cases h2{margin:0 0 4px}.cases .muted{margin:0 0 16px}
 .case{margin:0;padding:18px 20px;display:flex;flex-direction:column;gap:10px}

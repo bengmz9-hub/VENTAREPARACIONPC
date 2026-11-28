@@ -376,6 +376,26 @@ RESENAS = [
      "autor": "Alberto P.", "fecha": "noviembre 2025"},
 ]
 
+# Preguntas frecuentes: SOLO respuestas que ya afirma la web (fuente al lado). Coste de la revisión, garantía,
+# portátiles y medios de pago quedan fuera hasta que Jose los confirme.
+FAQ = {
+    "datos": ("¿Tengo que copiar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
+              'No. El <a href="servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
+    "piezas": ("¿Puedo llevar mis propias piezas para que me montéis el PC?",   # SERVICES servicio-de-montaje
+               'Sí. Si ya tienes los componentes, comprobamos que sean compatibles, los montamos y te entregamos el equipo listo para usar. '
+               'El <a href="servicio/servicio-de-montaje.html">servicio de montaje</a> cuesta desde 70 € y el importe mínimo se abona por adelantado.'),
+    "plazo": ("¿Cuánto tarda?",   # SERVICES mantenimiento (desde 24 h, orientativo) + sobre-mi (uno o dos días)
+              "El mantenimiento tiene un plazo aproximado desde 24 horas y muchas reparaciones se entregan en uno o dos días. "
+              "Son plazos orientativos: dependen del estado del equipo y de la carga de trabajo del taller."),
+    "pago": ("¿Hay que pagar algo por adelantado?",   # SERVICES montaje y asistencia remota
+             "En el servicio de montaje se abona por adelantado el importe mínimo, y en la asistencia remota, la primera hora. "
+             "En todos los servicios te damos el precio antes de empezar."),
+}
+
+def faq_block(keys):
+    items = "".join(f"<details><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1]}</p></details>" for k in keys)
+    return f'<section class="wrap sec faq"><h2>Preguntas frecuentes</h2><div class="faq-l">{items}</div></section>'
+
 # Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
 # El título es descriptivo; no se añade nada que la reseña no diga.
 CASOS = [
@@ -631,7 +651,7 @@ def build():
 
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Reparación, mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
-        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>'
+        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["plazo", "datos", "piezas", "pago"])
     body = responsive_imgs(body, sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 960px) 45vw, 30vw", eager=3)
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de reparación, mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
@@ -706,7 +726,7 @@ def build():
     # ---- Contacto / ubicación / legales
     body = head_band([("index.html", "Inicio"), (None, "Contacto")], "Contacto", "Contacta con VRPC para concertar una cita antes de traer tu ordenador.") + f"""<section class="wrap sec"><div class="g2"><div class="card box"><h2>Pide cita</h2><p>Ten a mano el modelo del equipo y una descripción de la avería o de la mejora que quieres hacer.</p><div class="btns"><a class="btn" href="{wa(chr(10).join(["Hola, quiero pedir cita.", "Equipo (modelo): ", "Qué le pasa o qué quiero mejorar: "]))}">{ic("wa")}Pedir cita por WhatsApp</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}{TEL}</a></div></div>
 <div class="card box"><h2>Cómo llegar</h2><p>{DIR}<br>Atención con cita previa.</p><a class="btn ghost" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div>
-<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>"""
+<div class="card box"><h2>Correo</h2><p><a href="mailto:{MAIL}">{MAIL}</a></p></div></div></section>""" + faq_block(["plazo", "pago", "datos"])
     write("contacto.html", page("", "Contacto | VRPC", "Contacto y cita previa en VENTAREPARACIONPC, L'Hospitalet de Llobregat.", body, "contacto.html", extra_head=negocio_ld()))
     body = head_band([("index.html", "Inicio"), (None, "Ubicación")], "Ubicación") + f'<section class="wrap sec"><div class="card box"><p>{DIR}</p><p>Atención con cita previa. Teléfono: <a href="{TEL_LINK}">{TEL}</a></p><a class="btn" href="{MAPS}" rel="noopener">{ic("pin")}Abrir mapa</a></div></section>'
     write("ubicacion.html", page("", "Ubicación | VRPC", "Dónde está VentaReparacionPC: Carrer de les Aigües del Llobregat, 115, interior, 08906 L'Hospitalet de Llobregat. Atención con cita previa.", body, extra_head=negocio_ld()))
