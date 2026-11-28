@@ -957,5 +957,7 @@
 .faq-card-l{display:flex;flex-wrap:wrap;gap:0 20px}
 .faq-card-l a{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:14px;font-weight:700}
 .faq-card-l .ic{width:16px;height:16px}
-@media(min-width:961px){.faq-h-in{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);grid-template-areas:"head list" "card list";grid-template-rows:auto 1fr;column-gap:clamp(28px,4vw,80px);row-gap:20px;align-items:start}}
+@media(min-width:961px){.faq-h-in{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);grid-template-areas:"head list" "card list";grid-template-rows:auto 1fr;column-gap:clamp(28px,4vw,80px);row-gap:20px;align-items:start}
+  /* la lista ocupa la misma altura total que título + tarjeta: empieza con el título y acaba con la tarjeta */
+  .faq-h .faq-l{align-self:stretch;display:flex;flex-direction:column;justify-content:space-between}}
 @media(max-width:960px){.faq-h{padding:0 0 44px}}
