@@ -18,3 +18,6 @@ __pycache__/
 
 # Configuración local de Claude Code
 .claude/
+
+# Mapa del proyecto que regeneran los hooks globales de Git en la raíz tras cada commit/checkout/merge
+.project-map.md
