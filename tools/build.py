@@ -376,6 +376,29 @@ RESENAS = [
      "autor": "Alberto P.", "fecha": "noviembre 2025"},
 ]
 
+# Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
+# El título es descriptivo; no se añade nada que la reseña no diga.
+CASOS = [
+    ("Green Potion", "No arrancaba: listo en 24 horas",
+     ["no me encendía el ordenador y me daba un error antes de llegar al escritorio", "en cuestión de 24h ya tenía el ordenador como cuando lo compré"]),
+    ("Dark Ghoul", "Sobrecalentamiento: de 85-90 °C a 62 °C",
+     ["pasé de abrir juegos y que se pusiera en 85-90 grados hasta apagarse a tener el mismo juego a 62 grados"]),
+    ("Hodei A.", "Pantalla negra tras tocar la BIOS",
+     ["Directamente pantalla negra y no cargaba nada, ni siquiera podía volver a acceder a la BIOS. Se lo llevé a Jose y me lo arregló.", "Era un arreglo complicado, con alguna soldadura en la placa base."]),
+]
+
+def casos_block():
+    out = []
+    for autor, titulo, frags in CASOS:
+        r = next(x for x in RESENAS if x["autor"] == autor)
+        for fr in frags:
+            assert fr in r["texto"], f"CASOS: el fragmento no es literal en la reseña de {autor}: {fr!r}"
+        cita = " […] ".join(frags)
+        out.append(f'<figure class="card case"><h3>{E(titulo)}</h3><blockquote><p>«{E(cita)}»</p></blockquote>'
+                   f'<figcaption>{E(autor)} · {E(r["fecha"])} · reseña en Google</figcaption></figure>')
+    return ('<section class="wrap sec cases"><h2>Casos contados por los clientes</h2><p class="muted">Fragmentos literales de reseñas publicadas en Google.</p>'
+            f'<div class="g3">{"".join(out)}</div><a class="more row" href="opiniones.html">Leer todas las opiniones {ic("arrow")}</a></section>')
+
 def reviews_block(marquee=True):
     """marquee=False: cuadrícula estática con el texto completo (página de opiniones); la portada conserva el marquee."""
     stars = ic("star") * 5
@@ -624,8 +647,8 @@ def build():
 <figure class="card"><img src="assets/img/despues.webp" alt="Interior del PC limpio" loading="lazy" data-zoom{img_dims("despues.webp")}><figcaption>{ic("check","g")}Después del mantenimiento{ic("zoom","z")}</figcaption></figure></div>
 <p class="muted">Las fotos muestran el interior del equipo antes y después de retirar el polvo acumulado. Pulsa en cualquiera para ampliarla.</p></div>
 <aside><div class="card side"><h3>Pide cita para tu equipo</h3><p>Cuéntanos el modelo y lo que necesitas. Atendemos con cita previa en L'Hospitalet.</p><a class="btn" href="{wa("Hola, quiero pedir cita para revisar mi equipo.")}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div>
-<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>"""
-    write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Ejemplos de trabajos realizados en el taller: antes y después de una limpieza interna de PC Gaming.", body, "trabajos-realizados.html"))
+<div class="card side"><h3>Servicio de este trabajo</h3><a class="more row" href="servicio/mantenimiento-pc-gaming.html">Mantenimiento {ic("arrow")}</a></div></aside></section>""" + casos_block()
+    write("trabajos-realizados.html", page("", "Trabajos realizados | VRPC", "Trabajos realizados en el taller: antes y después de una limpieza interna y casos de reparación contados por los clientes.", body, "trabajos-realizados.html"))
 
     # ---- Opiniones
     body = head_band([("index.html", "Inicio"), (None, "Opiniones de clientes")], "Opiniones de clientes", "Lee en Google las experiencias que han compartido quienes han pasado por el taller.") + f"""<section class="wrap sec rv-page">{reviews_block(marquee=False)}</section>
