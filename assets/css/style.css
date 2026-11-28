@@ -176,6 +176,14 @@ figcaption{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight
 .hg-fl.b .ic{color:#8fb8ff}
 /* "Así trabajamos": en móvil los 4 pasos en rejilla 2x2, sin flechas */
 .hg-top .hg-kick{margin:0 0 clamp(12px,2vh,22px)}
+/* antetítulo + sello de opiniones de Google en la misma línea (sin añadir altura al hero de una pantalla) */
+.hg-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 clamp(12px,2vh,22px)}
+.hg-top .hg-meta .hg-kick{margin:0}
+.hg-seal{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink);font-size:13.5px;font-weight:600;box-shadow:0 4px 12px rgba(15,42,92,.08)}
+.hg-seal:hover{text-decoration:none;border-color:var(--bl)}
+.hg-seal .ic{width:16px;height:16px;color:#f5a524;fill:currentColor}
+.hg-seal b{font-weight:800}
+@media(min-width:961px){.hg-seal{min-height:32px}}
 .hg-top .hg-sum{margin-top:clamp(12px,2vh,22px)}
 .hg-bot .hg-small{margin:0}
 .hg-proc{background:rgba(255,255,255,.62);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vh,34px) clamp(18px,1.8vw,32px)}

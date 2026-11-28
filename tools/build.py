@@ -573,13 +573,13 @@ def build():
     # ---- Inicio
     body = f"""<section class="hg" id="hero"><div class="hg-c">
 <div class="hg-l">
-<div class="hg-top"><p class="hg-kick">Servicio técnico en L'Hospitalet de Llobregat</p>
+<div class="hg-top"><div class="hg-meta"><p class="hg-kick">Servicio técnico en L'Hospitalet de Llobregat</p><a class="hg-seal" href="#opiniones">{ic("star")}<b>{E(RES["nota"])}</b> · {E(RES["total"])} opiniones en Google</a></div>
 <h1>Expertos en <em>Reparación y Montaje</em> de Ordenadores</h1>
-<p class="hg-sum">En VentaReparacionPC cuidamos de tu equipo como si fuera nuestro.</p></div>
+<p class="hg-sum">Revisamos tu equipo delante de ti antes de tocar nada.</p></div>
 <div class="hg-proc"><p class="hg-eb">Así trabajamos</p><h2>Servicio técnico transparente</h2><p class="hg-ps">Un proceso claro y sencillo para que siempre sepas qué le ocurre a tu equipo y qué soluciones tiene.</p>
 <ol class="hg-st"><li><span class="n">1</span><span class="ico">{ic("pc")}</span><b>Traes tu equipo</b><span class="d">Nos cuentas el problema y revisamos tu PC Gaming.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">2</span><span class="ico">{ic("search")}</span><b>Revisión delante de ti</b><span class="d">Analizamos el hardware delante del cliente.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">3</span><span class="ico">{ic("chat")}</span><b>Explicación clara</b><span class="d">Te mostramos el origen del problema y las posibles soluciones.</span></li><li class="ar" aria-hidden="true">{ic("arrow")}</li><li><span class="n">4</span><span class="ico">{ic("doc")}</span><b>Presupuesto sin compromiso</b><span class="d">Te damos el precio tras revisar tu equipo.</span></li></ol></div>
 <div class="hg-bot"><p class="hg-small">Nos especializamos en la reparación de ordenadores de sobremesa de todas las marcas, resolviendo problemas de lentitud, fallos de arranque o de placa base. Además, somos apasionados del hardware. Diseñamos tu PC Gaming personalizado pieza a pieza, optimizando cada euro de tu presupuesto para ofrecerte el máximo rendimiento en tus juegos favoritos. Todo ello con componentes de primeras marcas y total garantía.</p>
-<div class="hg-cta"><a class="btn" href="{WA_CITA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div>
+<div class="hg-cta"><a class="btn" href="{WA_CITA}">{ic("cal")}Solicitar cita previa {ic("arrow")}</a><a class="btn ghost" href="{TEL_LINK}" aria-label="Llamar al {TEL}">{ic("phone")}{TEL}</a></div></div>
 </div>
 <figure class="hg-r"><img src="assets/img/CAJA-ARGB-7-VENT.---11.webp" alt="PC gaming con caja de cristal y ventiladores ARGB" fetchpriority="high"{img_dims("CAJA-ARGB-7-VENT.---11.webp")}>
 
