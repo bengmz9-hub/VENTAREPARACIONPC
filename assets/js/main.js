@@ -159,3 +159,11 @@
   window.addEventListener('resize', f);
   window.addEventListener('rv-montado', f);
 })();
+
+// Preguntas frecuentes: solo una respuesta abierta a la vez. Los navegadores actuales lo hacen solos con <details name="faq">;
+// esto cubre los que aún no lo admiten (al abrir una, se cierran las demás de la misma lista).
+document.addEventListener('toggle', function (e) {
+  var d = e.target;
+  if (!d.open || !d.matches || !d.matches('.faq-l details')) return;
+  [].forEach.call(d.parentNode.querySelectorAll('details[open]'), function (x) { if (x !== d) x.open = false; });
+}, true);

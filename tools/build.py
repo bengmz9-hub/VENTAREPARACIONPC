@@ -408,6 +408,10 @@ FAQ = {
     "mejorar": ("¿Merece la pena mejorar mi PC en vez de comprar uno nuevo?",   # SERVICES actualizacion-pc-gaming (p y d)
                 "Muchas veces basta con cambiar una pieza: más RAM, un SSD/NVMe o una gráfica nueva. Te ayudamos a elegir qué "
                 '<a href="@P@servicio/actualizacion-pc-gaming.html">actualizar</a> primero según lo que usas y tu presupuesto, con la compatibilidad comprobada.'),
+    "asesoramiento": ("¿Me ayudáis a elegir las piezas antes de comprar?",   # SERVICES asesoramiento-compra (tarifa, listado validado, nota de montaje)
+                      f'Sí. Con el <a href="@P@servicio/asesoramiento-compra.html">asesoramiento de compra</a> ({_tarifa("asesoramiento-compra", "Tarifa")}) '
+                      "analizamos para qué vas a usar el equipo y te damos un listado de piezas compatibles y equilibrado para tu presupuesto. "
+                      "Si lo prefieres, también lo montamos en el taller."),
     "a_medida": ("¿Montáis PC Gaming a medida?",   # pc-gaming (configuraciones AMD e Intel, bajo pedido) + fichas (precio, plazo y cambios de componentes)
                  'Sí. Tenemos <a href="@P@pc-gaming.html">configuraciones AMD Ryzen e Intel</a> que montamos bajo pedido. '
                  "Al pedir cita te confirmamos precio, plazo de entrega y posibles cambios de componentes."),
@@ -422,7 +426,8 @@ FAQ = {
 
 def faq_block(keys, p="", home=False):
     """Lista de <details>. home=True: variante de portada (antetítulo, título a la izquierda y salida a WhatsApp para otras dudas)."""
-    items = "".join(f"<details><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1].replace('@P@', p)}</p></details>" for k in keys)
+    # name="faq": acordeón nativo, solo una respuesta abierta a la vez (main.js lo replica en navegadores sin soporte)
+    items = "".join(f'<details name="faq"><summary>{E(FAQ[k][0])}</summary><p>{FAQ[k][1].replace("@P@", p)}</p></details>' for k in keys)
     if home:
         duda = wa("Hola, tengo una duda antes de pedir cita: ")
         return ('\n<section class="faq-h" id="preguntas" aria-labelledby="faq-title"><div class="wrap faq-h-in"><div class="faq-h-head">'
@@ -680,7 +685,7 @@ def build():
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "a_medida", "cita"], home=True)
+""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "asesoramiento", "a_medida", "piezas", "cita"], home=True)
     body = responsive_imgs(body)
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
