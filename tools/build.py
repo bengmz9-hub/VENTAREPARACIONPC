@@ -108,7 +108,7 @@ SERVICES = [
          m="Reparación de ordenadores en L'Hospitalet: revisamos tu equipo delante de ti, localizamos la avería y te damos presupuesto sin compromiso.",
          alt="Interior de un PC Gaming después de una intervención en el taller",
          facts=[("Revisión", "Delante de ti, en el taller"), ("Presupuesto", "Sin compromiso, antes de empezar"), ("Atención", "Con cita previa")],
-         p=["Si tu ordenador no arranca, se bloquea, muestra pantallazos o se calienta más de la cuenta, lo revisamos delante de ti para localizar el origen del fallo. Te explicamos qué le ocurre y qué soluciones tiene, y te damos el precio antes de tocar nada."],
+         p=["Si tu ordenador no arranca, se bloquea, muestra pantallazos o se calienta más de la cuenta, lo revisamos delante de ti para localizar el origen del fallo. Te explicamos qué le ocurre y qué soluciones tiene, y te damos el precio antes de empezar la reparación."],
          incl=["Diagnóstico de fallos de arranque, de placa base y de componentes",
                "Sustitución de componentes dañados",
                "Resolución de problemas de inicio, pantallazos y errores críticos del sistema",
@@ -379,8 +379,8 @@ RESENAS = [
 # Preguntas frecuentes: SOLO respuestas que ya afirma la web (fuente al lado). Coste de la revisión, garantía,
 # portátiles y medios de pago quedan fuera hasta que Jose los confirme.
 FAQ = {
-    "datos": ("¿Tengo que copiar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
-              'No. El <a href="servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
+    "datos": ("¿Hace falta volcar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
+              'No: el <a href="servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
     "piezas": ("¿Puedo llevar mis propias piezas para que me montéis el PC?",   # SERVICES servicio-de-montaje
                'Sí. Si ya tienes los componentes, comprobamos que sean compatibles, los montamos y te entregamos el equipo listo para usar. '
                'El <a href="servicio/servicio-de-montaje.html">servicio de montaje</a> cuesta desde 70 € y el importe mínimo se abona por adelantado.'),
@@ -388,8 +388,7 @@ FAQ = {
               "El mantenimiento tiene un plazo aproximado desde 24 horas y muchas reparaciones se entregan en uno o dos días. "
               "Son plazos orientativos: dependen del estado del equipo y de la carga de trabajo del taller."),
     "pago": ("¿Hay que pagar algo por adelantado?",   # SERVICES montaje y asistencia remota
-             "En el servicio de montaje se abona por adelantado el importe mínimo, y en la asistencia remota, la primera hora. "
-             "En todos los servicios te damos el precio antes de empezar."),
+             "En el servicio de montaje se abona por adelantado el importe mínimo, y en la asistencia remota, la primera hora."),
 }
 
 def faq_block(keys):
@@ -399,10 +398,10 @@ def faq_block(keys):
 # Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
 # El título es descriptivo; no se añade nada que la reseña no diga.
 CASOS = [
-    ("Green Potion", "No arrancaba: listo en 24 horas",
+    ("Green Potion", "No arrancaba: resuelto en cuestión de 24 h",
      ["no me encendía el ordenador y me daba un error antes de llegar al escritorio", "en cuestión de 24h ya tenía el ordenador como cuando lo compré"]),
-    ("Dark Ghoul", "Sobrecalentamiento: de 85-90 °C a 62 °C",
-     ["pasé de abrir juegos y que se pusiera en 85-90 grados hasta apagarse a tener el mismo juego a 62 grados"]),
+    ("Jan B.", "No encendía bien y se calentaba mucho",
+     ["Lleve mi ordenador porque no encendía correctamente y se calentaba mucho, ahora funciona perfecto, lo ha limpiado y ha cambiado toda la ventilación."]),
     ("Hodei A.", "Pantalla negra tras tocar la BIOS",
      ["Directamente pantalla negra y no cargaba nada, ni siquiera podía volver a acceder a la BIOS. Se lo llevé a Jose y me lo arregló.", "Era un arreglo complicado, con alguna soldadura en la placa base."]),
 ]
@@ -693,9 +692,9 @@ def build():
     body = head_band([("index.html", "Inicio"), (None, "PC Gaming a medida")], "PC Gaming a medida", "Explora las configuraciones AMD e Intel de VRPC. Montamos los equipos bajo pedido.") + f"""<section class="wrap sec"><div class="filters" id="filters"><button type="button" class="chip on" data-f="all">Todos</button><button type="button" class="chip" data-f="AMD">AMD Ryzen</button><button type="button" class="chip" data-f="Intel">Intel</button></div>
 <div class="searchrow"><label for="q">Buscar</label><div><input id="q" type="search" placeholder="Por ejemplo, Ryzen 7 o RTX 5070"><span id="count" aria-live="polite">{len(pcs)} resultados</span></div></div>
 <div class="sortrow"><label for="orden">Ordenar</label><select id="orden"><option value="">Orden habitual</option><option value="asc">Precio: de menor a mayor</option><option value="desc">Precio: de mayor a menor</option></select></div>
-<p class="muted pc-note">Precios de referencia (última actualización conocida: 31‑07‑26). Confirma disponibilidad y plazo de entrega al pedir cita.</p>
+<p class="muted pc-note">Precios de referencia (última actualización conocida: <span class="nw">31-07-26</span>). Confirma disponibilidad y plazo de entrega al pedir cita.</p>
 <div class="g4" id="grid">{cards}</div></section>"""
-    body = responsive_imgs(body, sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 960px) 46vw, 23vw")
+    body = responsive_imgs(body, sizes="(max-width: 480px) calc(100vw - 32px), (max-width: 960px) 46vw, 23vw")
     write("pc-gaming.html", page("", "PC Gaming a medida | VRPC", "Configuraciones de PC Gaming AMD Ryzen e Intel montadas bajo pedido en L'Hospitalet.", body, "pc-gaming.html"))
     for c in pcs:
         specs = [x.strip() for x in re.split(r"\.\s+", c["desc"]) if x.strip()]

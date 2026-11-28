@@ -46,7 +46,8 @@
         var ok = (f === 'all' || x.dataset.brand === f) && x.dataset.t.indexOf(q) > -1;
         x.hidden = !ok; if (ok) k++;
       });
-      c.textContent = k + (k === 1 ? ' resultado' : ' resultados');
+      c.textContent = k + (k === 1 ? ' resultado' : ' resultados') +
+        (orden && orden.value ? (orden.value === 'asc' ? ' · de menor a mayor precio' : ' · de mayor a menor precio') : '');
     };
     document.getElementById('filters').addEventListener('click', function (e) {
       var t = e.target.closest('.chip'); if (!t) return;
@@ -60,7 +61,9 @@
       var v = this.value, lista = cards.slice();
       if (v) lista.sort(function (a, b) { return (a.dataset.price - b.dataset.price) * (v === 'asc' ? 1 : -1); });
       lista.forEach(function (x) { grid.appendChild(x); });
+      run();   // el contador (aria-live) anuncia también el orden
     });
+    if (orden && orden.value) orden.dispatchEvent(new Event('change'));   // el navegador puede recordar el valor al recargar
     var porHash = function () {
       var m = { todos: 'all', amd: 'AMD', intel: 'Intel' }, v = m[location.hash.slice(1).toLowerCase()];
       if (!v) return;
