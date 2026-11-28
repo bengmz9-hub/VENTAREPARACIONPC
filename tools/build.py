@@ -402,6 +402,15 @@ FAQ = {
                "Si es un problema de software y el equipo enciende y tiene conexión a Internet, sí: por "
                f'<a href="@P@servicio/asistencia-remota.html">asistencia remota</a>, a {_tarifa("asistencia-remota", "Precio")}. '
                "Llámanos y valoramos si se puede resolver a distancia."),
+    "informado": ("¿Me mantendréis informado durante la reparación?",   # sobre-mi: "Explica cada paso…" + "Mantiene informado… con fotos y mensajes"
+                  "Sí. Te explicamos cada paso: qué le pasa al equipo, qué hace falta y cuánto cuesta, y pedimos tu autorización antes de seguir. "
+                  "Durante la reparación te mantenemos informado con fotos y mensajes."),
+    "mejorar": ("¿Merece la pena mejorar mi PC en vez de comprar uno nuevo?",   # SERVICES actualizacion-pc-gaming (p y d)
+                "Muchas veces basta con cambiar una pieza: más RAM, un SSD/NVMe o una gráfica nueva. Te ayudamos a elegir qué "
+                '<a href="@P@servicio/actualizacion-pc-gaming.html">actualizar</a> primero según lo que usas y tu presupuesto, con la compatibilidad comprobada.'),
+    "a_medida": ("¿Montáis PC Gaming a medida?",   # pc-gaming (configuraciones AMD e Intel, bajo pedido) + fichas (precio, plazo y cambios de componentes)
+                 'Sí. Tenemos <a href="@P@pc-gaming.html">configuraciones AMD Ryzen e Intel</a> que montamos bajo pedido. '
+                 "Al pedir cita te confirmamos precio, plazo de entrega y posibles cambios de componentes."),
     "datos": ("¿Hace falta volcar mis datos para un mantenimiento?",   # SERVICES mantenimiento: "sin volcar tus datos"
               'No: el <a href="@P@servicio/mantenimiento-pc-gaming.html">mantenimiento</a> se hace sin necesidad de volcar tus datos.'),
     "piezas": ("¿Puedo llevar mis propias piezas para que me montéis el PC?",   # SERVICES servicio-de-montaje
@@ -671,13 +680,13 @@ def build():
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "cita"], home=True)
+""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "a_medida", "cita"], home=True)
     body = responsive_imgs(body)
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
     # ---- Servicios + fichas
     body = head_band([("index.html", "Inicio"), (None, "Servicio técnico")], "Servicio técnico", "Reparación, mantenimiento y mejoras de hardware para PC Gaming en L'Hospitalet de Llobregat.") + \
-        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["precio_antes", "plazo", "remota", "datos", "piezas", "pago"])
+        f'<section class="wrap sec"><div class="g3 big">{"".join(svc_card(s, h="h2") for s in main_s)}</div><h2 class="sp">Otros servicios</h2><div class="g3">{"".join(svc_card(s) for s in other_s)}</div></section>' + faq_block(["precio_antes", "plazo", "informado", "remota", "datos", "piezas", "pago"])
     body = responsive_imgs(body, sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 960px) 45vw, 30vw", eager=3)
     write("servicios.html", page("servicios.html", "Servicio técnico | VRPC", "Servicios de reparación, mantenimiento, actualización, BIOS, asistencia remota y montaje de PC en L'Hospitalet.", body, "servicios.html"))
     for s in SERVICES:
