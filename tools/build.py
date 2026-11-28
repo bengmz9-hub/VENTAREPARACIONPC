@@ -433,7 +433,14 @@ def faq_block(keys, p="", home=False):
         return ('\n<section class="faq-h" id="preguntas" aria-labelledby="faq-title"><div class="wrap faq-h-in"><div class="faq-h-head">'
                 '<p class="kicker">Preguntas frecuentes</p><h2 id="faq-title">Antes de traer tu equipo</h2>'
                 f'<p class="faq-more">¿Tienes otra duda? <a href="{duda}">Pregúntanos por WhatsApp</a></p></div>'
-                f'<div class="faq-l">{items}</div></div></section>\n')
+                f'<div class="faq-l">{items}</div>'
+                # Tarjeta bajo el título (en móvil va tras las preguntas): foto real del taller y datos ya publicados (contacto y SERVICES).
+                f'<div class="card faq-card"><img src="assets/img/despues.webp" alt="Interior de un PC Gaming limpio tras pasar por el taller" loading="lazy"{img_dims("despues.webp")}>'
+                '<div class="faq-card-b"><h3>Taller en L\'Hospitalet</h3>'
+                '<p>Atendemos con cita previa. Al pedirla, ten a mano el modelo del equipo y una descripción de la avería.</p>'
+                f'<p class="faq-card-dir">{CALLE} · {CP} {CIUDAD}</p>'
+                f'<div class="faq-card-l"><a href="{E(MAPS)}" rel="noopener">{ic("pin")}Cómo llegar</a><a href="trabajos-realizados.html">Ver trabajos realizados {ic("arrow")}</a></div></div></div>'
+                '</div></section>\n')
     return f'<section class="wrap sec faq"><h2>Preguntas frecuentes</h2><div class="faq-l">{items}</div></section>'
 
 # Casos de trabajos realizados contados por los clientes: fragmentos LITERALES de RESENAS (el build falla si alguno no está tal cual).
