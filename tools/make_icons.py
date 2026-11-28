@@ -47,7 +47,7 @@ def render_icon(rounded: bool) -> Image.Image:
 
 
 def main():
-    icons_dir = ROOT / "assets" / "icons"
+    icons_dir = ROOT / "docs" / "assets" / "icons"
     icons_dir.mkdir(parents=True, exist_ok=True)
 
     master_rgba = render_icon(rounded=True)
@@ -59,10 +59,10 @@ def main():
     p192 = icons_dir / "icon-192.png"
     master_rgba.resize((192, 192), Image.Resampling.LANCZOS).save(p192, format="PNG", optimize=True)
 
-    pico = ROOT / "favicon.ico"
+    pico = ROOT / "docs" / "favicon.ico"
     master_rgba.save(pico, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)])
 
-    papple = ROOT / "apple-touch-icon.png"
+    papple = ROOT / "docs" / "apple-touch-icon.png"
     master_rgb.resize((180, 180), Image.Resampling.LANCZOS).save(papple, format="PNG", optimize=True)
 
     for p in (pico, papple, p192, p512):

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Genera el sitio estático (HTML) de VRPC en la raíz del repo.
+"""Genera el sitio estático (HTML) de VRPC en docs/ (carpeta que publica GitHub Pages).
 Uso:  python tools/build.py
-Lee las fichas de PC desde varios/sitio (solo local) la primera vez y deja
-los datos en data/pcs.json; después ya no hace falta 'varios/'."""
+Fuentes: src/css, src/templates, data/pcs.json y los textos de este script y de tools/legal.py.
+Lee las fichas de PC desde local/sitio-antiguo (solo local) la primera vez y deja
+los datos en data/pcs.json; después ya no hace falta 'local/'."""
 import html, json, re, shutil, struct, sys
 from pathlib import Path
 from urllib.parse import quote, urljoin
@@ -10,8 +11,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import legal   # textos legales (tools/legal.py)
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "varios" / "sitio"
-IMG = ROOT / "assets" / "img"
+SRC = ROOT / "local" / "sitio-antiguo"
+PUB = ROOT / "docs"          # sitio publicado (GitHub Pages)
+CSS_SRC = ROOT / "src" / "css"
+IMG = PUB / "assets" / "img"
 TEL = "622 22 97 95"
 TEL_LINK = "tel:+34622229795"
 WA = "https://wa.me/34622229795"
@@ -54,7 +57,7 @@ def ld(obj):
 
 def negocio_ld():
     return ld({"@context": "https://schema.org", "@type": "LocalBusiness", "@id": SITE + "/#negocio", "name": NEGOCIO,
-               "url": SITE + "/", "image": f"{SITE}/{OG_IMG}", "logo": f"{SITE}/assets/logo.svg",
+               "url": SITE + "/", "image": f"{SITE}/{OG_IMG}", "logo": f"{SITE}/assets/img/logo.svg",
                "telephone": "+34" + TEL.replace(" ", ""), "email": MAIL,
                "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": CIUDAD,
                            "addressRegion": PROVINCIA, "addressCountry": "ES"},
@@ -520,7 +523,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
                f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{E(title)}">'
                f'<meta name="twitter:description" content="{E(desc)}"><meta name="theme-color" content="#1d5fd1">')
     icons = (f'<link rel="icon" href="{p}favicon.ico" sizes="16x16 32x32 48x48">'
-             f'<link rel="icon" href="{p}assets/logo.svg" type="image/svg+xml">'
+             f'<link rel="icon" href="{p}assets/img/logo.svg" type="image/svg+xml">'
              f'<link rel="icon" href="{p}assets/icons/icon-192.png" type="image/png" sizes="192x192">'
              f'<link rel="icon" href="{p}assets/icons/icon-512.png" type="image/png" sizes="512x512">'
              f'<link rel="apple-touch-icon" href="{p}apple-touch-icon.png" sizes="180x180">')
@@ -533,7 +536,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
     cta_h = f"""<section class="ctah"><div class="wrap ctah-in"><div><h2>¿Tu ordenador necesita revisión?</h2><p>Cuéntanos qué le ocurre y pide cita en L'Hospitalet.</p></div>
 <div class="btns"><a class="btn white" href="{WA_CITA}">{ic("cal")}Solicitar cita previa</a><a class="btn ghost-w" href="{TEL_LINK}">{ic("phone")}Llamar ahora</a></div></div></section>"""
     foot_h = f"""<footer class="fh"><div class="wrap fh-in">
-<div class="fh-l"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42" loading="lazy"><p>Servicio técnico y PC Gaming a medida en L'Hospitalet de Llobregat.</p>
+<div class="fh-l"><img src="{p}assets/img/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42" loading="lazy"><p>Servicio técnico y PC Gaming a medida en L'Hospitalet de Llobregat.</p>
 <nav class="fh-nav" aria-label="Pie"><a href="{p}servicios.html">Servicios</a><a href="{p}pc-gaming.html">PC Gaming</a><a href="{p}sobre-mi.html">Sobre mí</a><a href="{p}opiniones.html">Opiniones</a><a href="{p}blog.html">Blog</a><a href="{p}ubicacion.html">Ubicación</a></nav>
 <div class="fh-soc"><a href="{WA_CITA}" rel="noopener" aria-label="WhatsApp">{ic("wa")}</a><a href="{TEL_LINK}" aria-label="Llamar">{ic("phone")}</a><a href="mailto:{MAIL}" aria-label="Correo">{ic("mail")}</a><a href="{p}ubicacion.html" aria-label="Ubicación">{ic("pin")}</a></div></div>
 <div class="fh-card"><p class="fh-h">Contacto</p><a class="fh-big" href="mailto:{MAIL}">{MAIL}</a><a class="fh-big" href="{TEL_LINK}">{TEL}</a>
@@ -549,7 +552,7 @@ def page(path, title, desc, body, active="", depth=0, extra_head="", hero=False,
 {icons}<link rel="stylesheet" href="{p}assets/css/{"home" if active == "index.html" else "style"}.min.css">{extra_head}{SPEC_RULES}</head>
 <body{body_cls}>{skip}
 
-<header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
+<header class="top"><div class="wrap top-in"><a class="brand" href="{p}index.html" aria-label="VRPC Ventareparacionpc, inicio"><img src="{p}assets/img/logo.svg" alt="VRPC Ventareparacionpc" width="140" height="42"></a>
 <button type="button" class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
 <nav id="nav" class="nav" aria-label="Principal">{nav}<a class="btn small mob-only" href="{WA_CITA}">{ic("cal")}Pedir cita</a></nav>
 <a class="btn small desk-only" href="{WA_CITA}">{ic("cal")}Pedir cita</a><div class="nav-ov" id="nav-ov" aria-hidden="true"></div></div></header>
@@ -621,9 +624,10 @@ def min_css(t):
     return r.strip()
 
 def build_css():
-    css = ROOT / "assets" / "css"
-    base = (css / "style.css").read_text(encoding="utf-8")
-    home = (css / "home.css").read_text(encoding="utf-8")
+    css = PUB / "assets" / "css"
+    css.mkdir(parents=True, exist_ok=True)
+    base = (CSS_SRC / "style.css").read_text(encoding="utf-8")
+    home = (CSS_SRC / "home.css").read_text(encoding="utf-8")
     (css / "style.min.css").write_text(min_css(base), encoding="utf-8")
     (css / "home.min.css").write_text(min_css(base + "\n" + home), encoding="utf-8")
 
@@ -659,7 +663,7 @@ def write(path, content):
         content = content.replace("%%URL%%", base)
         content = re.sub(r'"REL:([^"]*)"', lambda m: json.dumps(url_of(urljoin(f"{SITE}/{path}", m.group(1))[len(SITE) + 1:])), content)
         SITEMAP.append(path)
-    f = ROOT / path
+    f = PUB / path
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
 
@@ -692,7 +696,7 @@ def build():
 </figure>
 </div>
 <a class="scroll-cue" href="#pantalla-2" id="scrollCue" aria-label="Bajar a Servicio Técnico">Servicio Técnico<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></section>
-""" + (ROOT / "tools" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "asesoramiento", "a_medida", "piezas", "cita"], home=True)
+""" + (ROOT / "src" / "templates" / "home_sections.html").read_text(encoding="utf-8") + reviews_home() + faq_block(["coste", "precio_antes", "plazo", "informado", "remota", "mejorar", "asesoramiento", "a_medida", "piezas", "cita"], home=True)
     body = responsive_imgs(body)
     write("index.html", page("index.html", "VRPC · Reparación y PC Gaming en L'Hospitalet", "Servicio técnico, mantenimiento y PC Gaming a medida en L'Hospitalet de Llobregat. Pide cita previa.", body, "index.html", extra_head=negocio_ld() + '<script src="assets/js/home.js" defer></script>'))
 
@@ -790,8 +794,7 @@ def build():
     write("404.html", page("", "Página no encontrada | VRPC", "La página solicitada no existe en VentaReparacionPC.", body, is_404=True))
 
     # logo
-    (ROOT / "assets").mkdir(exist_ok=True)
-    write("assets/logo.svg", '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 42" width="140" height="42"><text x="0" y="29" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-style="italic" font-size="32" fill="#1d4fb8">VRPC</text><text x="1" y="40" font-family="Arial,sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#0f2a5c">VENTAREPARACIONPC</text></svg>')
+    write("assets/img/logo.svg", '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 42" width="140" height="42"><text x="0" y="29" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-style="italic" font-size="32" fill="#1d4fb8">VRPC</text><text x="1" y="40" font-family="Arial,sans-serif" font-weight="700" font-size="7.5" letter-spacing="1" fill="#0f2a5c">VENTAREPARACIONPC</text></svg>')
     # ---- redirecciones desde las URLs antiguas, sitemap y robots
     redirects = dict(REDIRECTS)
     for c in pcs:

@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from PIL import Image
 
-IMG = Path(__file__).resolve().parent.parent / "assets" / "img"
+IMG = Path(__file__).resolve().parent.parent / "docs" / "assets" / "img"
 Q = 78
 
 # imágenes grandes que ninguna página usa (no se generan variantes)

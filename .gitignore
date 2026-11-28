@@ -1,5 +1,7 @@
-varios/
+# Material local de trabajo (fuentes antiguas, copias, prototipos, notas): no forma parte del repo
+local/
 tools/_*
+__pycache__/
 *.mp4
 
 # Secretos y datos privados: nunca subir
@@ -14,8 +16,5 @@ tools/_*
 *secret*
 *.log
 
-# Archivos internos de trabajo (no forman parte de la web)
+# Configuración local de Claude Code
 .claude/
-.project-map.md
-continue.md
-ideas.md
